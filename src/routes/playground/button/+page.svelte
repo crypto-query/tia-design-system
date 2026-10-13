@@ -29,6 +29,37 @@
     </header>
 
     <section class="space-y-3">
+        <h2 class="text-lg font-semibold">When to use it</h2>
+        <p class="text-sm text-foreground-muted">
+            Button is the library's action control, in a set of variants that rank one against another. Use it for anything the reader does,
+            and let the variant carry the ranking: one filled button per region, because a screen where everything is primary has no primary
+            at all.
+        </p>
+        <ul class="list-disc space-y-1.5 pl-5 text-sm text-foreground-muted">
+            <li>
+                <span class="font-medium text-foreground">The main action of a form or a panel.</span> Filled, once, where the reader's eye should
+                land when they have finished reading.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">Secondary actions beside it.</span> Outline or ghost, so Cancel is reachable without
+                competing with Save.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">A destructive action.</span> Named for what it destroys, and paired with a confirmation
+                step when there is no undo.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">An offer that saves the reader money.</span> Success, in the status tint, and with words
+                that say what the reader gains.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">Not for navigation dressed as an action.</span> Give it an
+                <code class="font-mono">href</code> and it renders as a link, which is what a destination should always be.
+            </li>
+        </ul>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-lg font-semibold">Variants</h2>
         <div class="flex flex-wrap items-center gap-4">
             {#each variants as variant (variant)}

@@ -30,6 +30,33 @@
     </header>
 
     <section class="space-y-3">
+        <h2 class="text-lg font-semibold">When to use it</h2>
+        <p class="text-sm text-foreground-muted">
+            Card is the library's surface: it lifts a group of things off the canvas and gives them an edge. Use it once the grouping needs
+            a boundary rather than a gap — once a reader would otherwise have to guess where one group ends and the next begins, or once the
+            group is a thing they can act on.
+        </p>
+        <ul class="list-disc space-y-1.5 pl-5 text-sm text-foreground-muted">
+            <li>
+                <span class="font-medium text-foreground">A panel of related fields or figures.</span> The ordinary case: a boundary and a padding,
+                so a settings block or a metric group reads as one.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">An object in a list.</span> <code class="font-mono">interactive</code> lifts on hover
+                and says the whole card is the target, rather than some link inside it.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">A surface over something busy.</span> The glass treatment, for a panel that sits on
+                imagery rather than on the flat canvas.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">Not for the page itself.</span> The page layout sets the measure; a Card wrapped around
+                a whole page draws a border around everything and so groups nothing.
+            </li>
+        </ul>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-lg font-semibold">Resting treatments</h2>
         <div class="grid gap-6 md:grid-cols-3">
             <Card flat>

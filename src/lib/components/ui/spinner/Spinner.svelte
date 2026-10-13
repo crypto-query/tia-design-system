@@ -59,7 +59,7 @@
 
     const sizeClass = $derived(typeof size === "number" ? undefined : SIZES[size]);
 
-    /** Named steps rather than a px table — `app.css` holds the five extents, and a second copy here would drift. */
+    /** Named steps rather than a px table — `theme.css` holds the five extents, and a second copy here would drift. */
     const smallLabel = $derived(typeof size === "number" ? size <= 16 : size === "xs" || size === "sm");
 
     /** At 0 the duration divides by zero, which is an invalid `animation` and so a spinner that silently stands still. */

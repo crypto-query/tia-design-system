@@ -34,6 +34,32 @@
     </header>
 
     <section class="space-y-3">
+        <h2 class="text-lg font-semibold">When to use it</h2>
+        <p class="text-sm text-foreground-muted">
+            Alert is a standing message in the page's own flow, on the tint that its status means. Use it when the message would still be
+            true after a reload — that is the line between it and a toast, and it decides the choice more often than tone or length does.
+        </p>
+        <ul class="list-disc space-y-1.5 pl-5 text-sm text-foreground-muted">
+            <li>
+                <span class="font-medium text-foreground">A form-level error.</span> What went wrong with the submission as a whole, above the
+                fields, where it survives the reader scrolling away and back.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">A standing caution.</span> A plan about to lapse, an account limited — a condition of
+                the page rather than an event on it.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">A note beside content.</span> With <code class="font-mono">role="note"</code> instead
+                of the default assertive live region.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">Not for a confirmation.</span> "Saved" is an event with nothing left to read; a toast
+                says it and leaves, where an Alert would sit there afterwards claiming to be a condition.
+            </li>
+        </ul>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-lg font-semibold">Entry motion</h2>
         <p class="text-sm text-foreground-muted">Alerts rise 6px and fade in over 240ms. Reduced motion keeps only the fade.</p>
         <Button variant="outline" onclick={() => (replay += 1)}>Replay alert</Button>

@@ -33,6 +33,33 @@
     </header>
 
     <section class="space-y-3">
+        <h2 class="text-lg font-semibold">When to use it</h2>
+        <p class="text-sm text-foreground-muted">
+            Spinner is an indeterminate busy mark in six shapes, sized and paced by one prop each. Use it where a wait is long enough to
+            notice and short enough not to need explaining — roughly a second to a few seconds. Below that it flashes and reads as a glitch;
+            above it, a reader wants to know what is happening, which is prose rather than a mark.
+        </p>
+        <ul class="list-disc space-y-1.5 pl-5 text-sm text-foreground-muted">
+            <li>
+                <span class="font-medium text-foreground">Inside a control that was pressed.</span> The submit that is now working, where the
+                mark sits in the button the reader is already looking at.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">A region that is loading.</span> A panel or a list fetching its contents, with the mark
+                where the contents will land.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">An unknowable wait.</span> A third party is being called and no percentage exists to
+                show — the honest case for an indeterminate mark.
+            </li>
+            <li>
+                <span class="font-medium text-foreground">Not for a wait you can measure.</span> Six of eight files uploaded is a fact worth showing;
+                a spinner throws it away.
+            </li>
+        </ul>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-lg font-semibold">Every shape at every size</h2>
         <Card radius="lg" padding="md">
             <div class="grid grid-cols-[auto_repeat(5,1fr)] items-center gap-x-4 gap-y-5">
