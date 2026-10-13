@@ -192,7 +192,7 @@
             A column's <code class="font-mono">align</code> moves its header and its cells together, so the header always sits over the edge its
             figures line up on.
         </p>
-        <Card padding="none" class="max-w-2xl">
+        <Card padding="none" class="max-w-2xl pt-5">
             <Table columns={alignmentColumns} rows={ledger} aria-label="Column alignment" />
         </Card>
     </section>
@@ -203,7 +203,7 @@
             <code class="font-mono">numeric</code> sets <code class="font-mono">tabular-nums</code> on the column's cells — the digits take one
             shared width, so the decimal points stack. Compare the two right-hand columns: same figures, only the second one lines up.
         </p>
-        <Card padding="none" class="max-w-2xl">
+        <Card padding="none" class="max-w-2xl pt-5">
             <Table columns={numericColumns} rows={ledger} aria-label="The numeric flag" />
         </Card>
     </section>
@@ -214,7 +214,7 @@
             Without an <code class="font-mono">empty</code> snippet, an empty <code class="font-mono">rows</code> array draws the header alone.
             The Section can place its empty-state copy outside the table.
         </p>
-        <Card padding="none" class="max-w-3xl">
+        <Card padding="none" class="max-w-3xl pt-5">
             <Table columns={invoiceColumns} rows={[]} aria-label="No invoices" />
             <p class="px-6 py-6.5 text-center text-sm text-foreground-subtle">
                 No invoices yet — your first one appears here after the first charge.
@@ -228,7 +228,7 @@
             Supply an <code class="font-mono">empty</code> snippet to keep the headers and show a message inside the table body. The message spans
             all columns and disappears when rows exist.
         </p>
-        <Card padding="none" class="max-w-3xl">
+        <Card padding="none" class="max-w-3xl pt-5">
             <Table columns={invoiceColumns} rows={[]} aria-label="Invoice history unavailable">
                 {#snippet empty()}
                     <span class="text-sm text-foreground-muted">We couldn't load your invoices.</span>

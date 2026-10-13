@@ -18,6 +18,8 @@
         attached: boolean;
         /** The group fills its container, so each button takes an equal share of it. */
         fullWidth: boolean;
+        /** The group stacks its items, so the full width is the cross axis and needs no share. */
+        vertical?: boolean;
         /** The single-select group paints the selected surface below its items. */
         sliding?: boolean;
         indicatorReady?: boolean;
@@ -88,7 +90,7 @@
     const groupStyles = $derived(
         cn(
             inherited?.attached && "border-transparent",
-            inherited?.fullWidth && "min-w-0 flex-1",
+            inherited?.fullWidth && !inherited.vertical && "min-w-0 flex-1",
             inherited?.sliding &&
                 groupItemValue !== undefined &&
                 "relative z-10 transition-colors duration-200 data-[state=on]:border-transparent data-[state=on]:bg-primary data-[state=on]:enabled:text-primary-foreground data-[state=on]:disabled:text-primary-foreground data-[state=on]:disabled:opacity-100",

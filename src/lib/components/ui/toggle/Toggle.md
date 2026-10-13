@@ -178,7 +178,9 @@ sets on a grouped Toggle from its own context:
   `min-w-0` is its `minWidth: 0`, and without it a flex item will not shrink below
   its own content, so "an equal share" quietly becomes "as wide as the longest
   label". It sits _before_ the size map, so an icon-only button keeps the
-  `min-w-9` that makes it square.
+  `min-w-9` that makes it square. A vertical group skips both: there `flex-1`'s
+  zero basis sits on the height and collapses each item to its text line, while
+  the group's `items-stretch` already gives every item the full width.
 
 A `variant` or `size` set on an individual `<Toggle>` still **wins** over the
 group's — and this one is an **open question, not a settled departure.** Issue 35

@@ -10,7 +10,7 @@
     const LONG =
         "Backtested on six years of five-minute data across eleven venues, with slippage modelled at the quoted spread rather than the mid.";
 
-    let pinned = $state({ top: true, right: true, bottom: true, left: true });
+    let pinned = $state({ top: false, right: false, bottom: false, left: false });
 </script>
 
 <svelte:head>
@@ -132,8 +132,9 @@
             The same hint pinned open above, below, left and right of one trigger each, so the arrow can be read on every side without
             hovering them one at a time. It is a square rotated 45° and centred on the panel's edge: the fill covers the panel's border
             across the arrow's mouth, and the two edges the rotation leaves exposed carry that border on — so the panel and its point are
-            one outline rather than a balloon with a separate chip under it. Hovering a trigger and leaving closes that one, because the
-            primitive still owns the close; the button puts them back.
+            one outline rather than a balloon with a separate chip under it. The button pins all four once the section is in view: a panel
+            opened off-screen is flipped or shifted to fit the viewport, and any scroll closes it. Hovering a trigger and leaving closes
+            that one, because the primitive still owns the close.
         </p>
         <div class="space-y-6 rounded-xl border border-border-muted bg-surface px-40 py-16">
             <div class="flex justify-center">

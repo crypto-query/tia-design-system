@@ -407,6 +407,17 @@ describe("ToggleGroup", () => {
             for (const width of widths) expect(width).toBeCloseTo(widths[0], 0);
         });
 
+        it("keeps each item at its size's height and the group's width when fullWidth and vertical", () => {
+            render(Harness, { type: "multiple", label: "Panel", fullWidth: true, orientation: "vertical" });
+            const track = screen.getByRole("group", { name: "Panel" }).getBoundingClientRect();
+
+            for (const name of BUTTONS) {
+                const button = screen.getByRole("button", { name }).getBoundingClientRect();
+                expect(button.height).toBe(36);
+                expect(button.width).toBeCloseTo(track.width, 0);
+            }
+        });
+
         it("leaves their widths to their labels when it is not fullWidth", () => {
             render(Harness, { type: "single", label: "Panel" });
             const widths = BUTTONS.map((name) => screen.getByRole("radio", { name }).getBoundingClientRect().width);

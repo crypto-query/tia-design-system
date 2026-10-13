@@ -58,6 +58,7 @@
         disabled,
         attached: attached || sliding,
         fullWidth,
+        vertical,
         sliding,
         indicatorReady: capsule.ready
     }));

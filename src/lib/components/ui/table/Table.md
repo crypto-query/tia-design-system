@@ -52,6 +52,15 @@ supplies the message and its text style. Without the snippet, an empty array sti
 renders the header alone, so a Section that wants its empty-state line outside the
 table keeps that option.
 
+## The caller supplies the room above the header
+
+The header row has bottom padding only. In the Invoices pane the title row above
+the table gives it its top space, and a header with its own top padding would
+double that gap. A table placed at the top of a `padding="none"` Card therefore
+needs a top padding on the Card (`pt-5`, the title row's own), or its labels sit
+against the card's edge. Top padding is safe there: only side padding pulls the
+row rules in from the card edges.
+
 ## What it deliberately does not do
 
 No sorting, no selection, no pagination, no sticky header, and no horizontal
