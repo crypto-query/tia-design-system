@@ -1,0 +1,21 @@
+# dependencies (bun install)
+node_modules
+
+# SvelteKit output
+.svelte-kit
+build
+
+# vitest browser-mode failure screenshots, written beside the test that failed
+**/__screenshots__/
+
+# caches
+.eslintcache
+.cache
+*.tsbuildinfo
+
+# Finder (MacOS) folder config
+.DS_Store
+
+# Playwright output
+.playwright-cli
+test-results

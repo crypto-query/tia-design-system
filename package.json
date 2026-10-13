@@ -1,0 +1,72 @@
+{
+    "name": "tia-design-system",
+    "version": "0.1.0",
+    "type": "module",
+    "private": true,
+    "files": [
+        "src/lib"
+    ],
+    "exports": {
+        "./ui/button/Button.svelte": "./src/lib/components/ui/button/Button.svelte",
+        "./ui/card/Card.svelte": "./src/lib/components/ui/card/Card.svelte",
+        "./ui/alert/Alert.svelte": "./src/lib/components/ui/alert/Alert.svelte",
+        "./ui/spinner/Spinner.svelte": "./src/lib/components/ui/spinner/Spinner.svelte",
+        "./utils/cn": "./src/lib/utils/cn.ts",
+        "./theme.css": "./src/lib/theme.css"
+    },
+    "scripts": {
+        "prepare": "svelte-kit sync || echo ''",
+        "dev": "vite dev --host localhost --port 4002",
+        "check": "svelte-kit sync && svelte-check --fail-on-warnings --tsconfig ./tsconfig.json",
+        "lint": "prettier --check . && eslint .",
+        "lint:fix": "prettier --write . && eslint . --fix",
+        "test": "vitest run --project=server --project=client",
+        "test:unit": "vitest run --project=server"
+    },
+    "peerDependencies": {
+        "bits-ui": "2.19.2",
+        "clsx": "^2.1",
+        "echarts": "^6.1",
+        "lucide-svelte": "^1.0",
+        "svelte": "^5.56",
+        "tailwind-merge": "^3.6"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@sveltejs/kit": "^2.70.2",
+        "@sveltejs/vite-plugin-svelte": "^6.2.4",
+        "@tailwindcss/forms": "^0.5.11",
+        "@tailwindcss/vite": "^4.3.3",
+        "@testing-library/jest-dom": "7.0.1",
+        "@testing-library/svelte": "5.4.2",
+        "@typescript-eslint/eslint-plugin": "^8.67.0",
+        "@typescript-eslint/parser": "^8.67.0",
+        "@vitest/browser": "3.2.6",
+        "bits-ui": "2.19.2",
+        "clsx": "^2.1.1",
+        "echarts": "^6.1.0",
+        "eslint": "^10.8.1",
+        "eslint-plugin-better-tailwindcss": "^4.7.0",
+        "eslint-plugin-svelte": "^3.23.0",
+        "globals": "^17.11.0",
+        "lucide-svelte": "^1.0.1",
+        "mode-watcher": "^1.1.0",
+        "playwright": "1.62.1",
+        "prettier": "^3.9.6",
+        "prettier-plugin-svelte": "^4.1.1",
+        "prettier-plugin-tailwindcss": "^0.8.1",
+        "svelte": "^5.56.9",
+        "svelte-check": "^4.7.6",
+        "svelte-eslint-parser": "^1.8.1",
+        "tailwind-merge": "^3.6.0",
+        "tailwindcss": "^4.3.3",
+        "tailwindcss-animate": "^1.0.7",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.6",
+        "vitest": "3.2.6"
+    },
+    "patchedDependencies": {
+        "@vitest/mocker@3.2.6": "patches/@vitest%2Fmocker@3.2.6.patch",
+        "bits-ui@2.19.2": "patches/bits-ui@2.19.2.patch"
+    }
+}

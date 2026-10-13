@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+@plugin "@tailwindcss/forms";
+@import "./lib/theme.css";
+
+@source "./lib";
+@source "./routes/playground";

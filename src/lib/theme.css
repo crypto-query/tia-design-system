@@ -1,0 +1,1483 @@
+/* Tokens, utilities and base styles only. The consumer imports Tailwind (with tailwindcss-animate
+   and @tailwindcss/forms) before this file, and adds its own @source for these components. */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* TIA Investor Design Tokens */
+:root {
+    /* ========================================
+     TYPOGRAPHY - FONT FAMILIES
+     ======================================== */
+    --font-primary: "Poppins", sans-serif;
+    --font-secondary: "Noto Sans", sans-serif;
+    --font-system: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    /* ========================================
+     TYPOGRAPHY - FONT SIZES
+     ======================================== */
+    --text-base: 16px;
+    --text-xs: 12px;
+    --text-sm: 13px;
+    --text-md: 14px;
+    --text-lg: 15px;
+    --text-xl: 18px;
+    --text-2xl: 20px;
+    --text-3xl: 24px;
+    --text-4xl: 40px;
+    --text-5xl: 48px;
+    --text-6xl: 50px;
+    --text-7xl: 69px;
+
+    /* ========================================
+     TYPOGRAPHY - FONT WEIGHTS
+     ======================================== */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-black: 900;
+
+    /* ========================================
+     TYPOGRAPHY - LINE HEIGHTS
+     ======================================== */
+    --leading-none: 1;
+    --leading-tight: 1.2;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+    --leading-loose: 2;
+
+    /* ========================================
+     TYPOGRAPHY - LETTER SPACING
+     ======================================== */
+    --tracking-tighter: -0.05em;
+    --tracking-tight: -0.025em;
+    --tracking-normal: 0em;
+    --tracking-wide: 0.025em;
+    --tracking-wider: 0.05em;
+    --tracking-widest: 0.1em;
+
+    /* ========================================
+     COLORS - TIA BRAND COLORS
+     ======================================== */
+    /* Blues */
+    --blue: #0a315a;
+    --dark-blue: #072648;
+    --midnight-blue: #04273f;
+    --light-blue: #e4ecf5;
+    --blue-grey: #d6e7fa;
+
+    /* Yellows/Oranges */
+    --yellow: #fecd04;
+    --orange: #ffa006;
+
+    /* Neutrals */
+    --white: #ffffff;
+    --black: #000000;
+    --light-grey: #f1f1f1;
+    --cyan-bluish-gray: #abb8c3;
+
+    /* ========================================
+     COLORS - GREY SCALE
+     ======================================== */
+    --grey-50: #f9fafb;
+    --grey-100: #f3f4f6;
+    --grey-200: #e5e7eb;
+    --grey-300: #d1d5db;
+    --grey-400: #9ca3af;
+    --grey-500: #6b7280;
+    --grey-600: #4b5563;
+    --grey-700: #374151;
+    --grey-800: #1f2937;
+    --grey-900: #111827;
+    --grey-950: #030712;
+
+    /* ========================================
+     COLORS - NAVY SCALE
+
+     The values the dark block is built from, taken from the design system's
+     themes.css. Deliberately NOT registered as utilities below: a component
+     reaching for bg-navy-800 directly is the raw-token-as-surface bug the
+     contract forbids. ADR 0007.
+     ======================================== */
+    --navy-50: #e7eef6;
+    --navy-100: #9db2c6;
+    --navy-200: #71889e;
+    --navy-300: #559ae0;
+    --navy-400: #3b7cc4;
+    --navy-500: #15466e;
+    --navy-600: #0f3656;
+    --navy-700: #102f4c;
+    --navy-800: #092a42;
+    --navy-900: #061c2c;
+    --navy-950: #04141f;
+
+    /* ========================================
+     COLORS - SEMANTIC STATUS
+     ======================================== */
+    --success: #2f8351;
+    --success-light: #eef7f1;
+    --warning: #f3b33e;
+    --warning-light: #fdf8ec;
+    --error: #db0000;
+    --error-light: #faeeee;
+    --info: #235af3;
+    --info-light: #f3f8ff;
+
+    /* Strong status text — readable on the matching *-light tint.
+       The dark block lifts both the tints and these. */
+    --success-strong: #1f6b40;
+    --warning-strong: #966800;
+    --error-strong: #c20000;
+    --info-strong: #1d4fd0;
+
+    /* ========================================
+     COLORS - GRADIENTS
+     ======================================== */
+    /* Exact gradients from tiainvestor.com (diagonal split style) */
+    --gradient-orange: linear-gradient(to bottom right, rgba(255, 160, 6, 1) 49.9%, rgb(255, 205, 31) 50%);
+    --gradient-blue: linear-gradient(to bottom right, rgba(14, 14, 84, 1) 49.9%, rgb(58, 87, 126) 50%);
+    /* Alternative smooth gradients */
+    --gradient-orange-smooth: linear-gradient(to right, rgb(255, 160, 6) 1%, rgb(255, 205, 31) 100%);
+    --gradient-blue-smooth: linear-gradient(to right, hsl(209, 72%, 19%), hsl(213, 36%, 36%));
+
+    /* ========================================
+     SPACING - 9-STEP SCALE + EXTENDED
+     ======================================== */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem; /* 8px */
+    --spacing-3: 0.75rem; /* 12px */
+    --spacing-4: 1rem; /* 16px */
+    --spacing-5: 1.25rem; /* 20px */
+    --spacing-6: 1.5rem; /* 24px */
+    --spacing-8: 2rem; /* 32px */
+    --spacing-10: 2.5rem; /* 40px */
+    --spacing-12: 3rem; /* 48px */
+
+    /* Extended spacing */
+    --spacing-14: 3.5rem; /* 56px */
+    --spacing-16: 4rem; /* 64px */
+    --spacing-20: 5rem; /* 80px */
+    --spacing-24: 6rem; /* 96px */
+    --spacing-32: 8rem; /* 128px */
+
+    /* ========================================
+     SHADOWS - SCALE + COMPONENT SHADOWS
+     ======================================== */
+    /* Shadow scale */
+    --shadow-2xs: 0px 1px 0px 1px rgba(0, 0, 0, 0.04);
+    --shadow-xs: 0px 1px 0px 0px rgba(0, 0, 0, 0.04) inset;
+    --shadow-sm: 0px 2px 12px 0px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0px 2px 36px 0px rgba(0, 0, 0, 0.11);
+    --shadow-lg: 0px 7px 12px 3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0px 2px 0px 0px rgba(0, 0, 0, 0.07);
+    --shadow-2xl: 0px 0px 0px 3px rgba(24, 24, 27, 0.17);
+    --shadow-inner: 0px 1px 0px 0px rgba(0, 0, 0, 0.04) inset;
+
+    /* Component shadows */
+    --shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.04);
+    --shadow-card-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-popover: 0px 7px 12px 3px rgba(0, 0, 0, 0.1);
+    --shadow-dropdown: 0px 2px 12px 0px rgba(0, 0, 0, 0.25);
+    --shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.03);
+    --shadow-kbd: 0px 2px 0px 0px rgba(0, 0, 0, 0.07);
+
+    /* Layered ambient shadows (resting → raised). A separate vocabulary from the
+       --shadow-sm/md size ramp above: these are the design system's two soft
+       brand-tinted blurs, reached for by name, not by size.
+
+       These and the six glows below carry no .dark override, unlike every shadow
+       above them. The design system defines none, and ADR 0005 bars inventing
+       values it never specified. */
+    --shadow-subtle: 0 1px 3px rgba(4, 39, 63, 0.05), 0 4px 16px rgba(4, 39, 63, 0.07);
+    --shadow-medium: 0 4px 8px rgba(4, 39, 63, 0.07), 0 12px 32px rgba(4, 39, 63, 0.12);
+
+    /* Button glows — brand-tinted, grown on hover. Named by component role like
+       every other shadow here, not by the colour role the design system used:
+       shadow-primary and shadow-destructive are already live shadow-colour
+       utilities, and shadow-secondary would name a deleted token. */
+    --shadow-btn-default: 0 4px 12px rgba(10, 49, 90, 0.28);
+    --shadow-btn-default-hover: 0 9px 22px rgba(10, 49, 90, 0.36);
+    --shadow-btn-accent: 0 4px 12px rgba(254, 205, 4, 0.32);
+    --shadow-btn-accent-hover: 0 9px 22px rgba(255, 160, 6, 0.44);
+    --shadow-btn-destructive: 0 4px 12px rgba(219, 0, 0, 0.26);
+    --shadow-btn-destructive-hover: 0 9px 22px rgba(219, 0, 0, 0.34);
+
+    /* ========================================
+     SEMANTIC TOKENS - LIGHT MODE
+     ======================================== */
+
+    /* Semantic - Background */
+    --background: var(--light-blue);
+    --background-alt: var(--white);
+    --background-subtle: var(--grey-50);
+    --background-muted: var(--grey-100);
+    --background-emphasis: var(--grey-200);
+
+    /* Semantic - Foreground */
+    --foreground: var(--midnight-blue);
+    --foreground-alt: var(--dark-blue);
+    --foreground-muted: var(--grey-600);
+    --foreground-subtle: var(--grey-500);
+
+    /* Semantic - Borders */
+    --border: var(--grey-300);
+    --border-muted: var(--grey-200);
+    --border-emphasis: var(--grey-400);
+    /* Two steps down the scale from --border, which is decorative: a control's boundary is what
+       tells a sighted user where the field is, so it carries WCAG 1.4.11's 3:1 and --border does
+       not. Dark already drew this distinction; light drew --border-input and --border alike. */
+    --border-input: var(--grey-500);
+    --border-input-hover: var(--grey-600);
+    --border-focus: var(--blue);
+
+    /* Semantic - Brand Colors. --primary-hover snaps to --dark-blue rather than
+       the reference's #0e2a90, a saturated indigo outside the brand family. */
+    --primary: var(--blue);
+    --primary-hover: var(--dark-blue);
+    --primary-foreground: var(--white);
+
+    --secondary: var(--yellow);
+    --secondary-hover: var(--orange);
+    --secondary-foreground: var(--midnight-blue);
+
+    --accent: var(--light-blue);
+    --accent-hover: var(--blue-grey);
+    --accent-foreground: var(--midnight-blue);
+
+    /* Semantic - Interactive */
+    --ring: var(--blue);
+    --ring-offset: var(--white);
+    --hover-overlay: rgba(10, 49, 90, 0.05);
+    --active-overlay: rgba(10, 49, 90, 0.1);
+
+    /* Semantic - Surfaces */
+    --surface: var(--white);
+    --surface-raised: var(--grey-50);
+    --surface-overlay: var(--white);
+    --surface-sunken: var(--grey-100);
+
+    /* Semantic - Scrim (the dim behind a modal layer). It carries its own alpha,
+       so `bg-scrim` needs no opacity modifier — which is also why it is a token
+       rather than a raw hue with a slash: what sits behind it is the whole page,
+       not one component's fill. It is dark on both canvases because its job is to
+       push the page back rather than to match it, and it is stated in both blocks
+       for that reason — the same arrangement --destructive-hover has. */
+    --scrim: color-mix(in srgb, var(--midnight-blue) 48%, transparent);
+
+    /* Semantic - Glass (frosted panels over the tinted canvas). --glass-blur is
+       a whole filter function and no Tailwind namespace holds one, so unlike its
+       two siblings it maps to no utility and no class can reach it. Card, the
+       first component to need frosting, matches its 8px with the stock
+       backdrop-blur-sm rather than reading it — change one and change the
+       other. */
+    --surface-glass: rgba(255, 255, 255, 0.72);
+    --border-glass: rgba(255, 255, 255, 0.6);
+    --glass-blur: blur(8px);
+
+    /* Semantic - Cards/Popovers */
+    --card-background: var(--white);
+    --card-foreground: var(--midnight-blue);
+    --card-border: var(--grey-200);
+
+    --popover-background: var(--white);
+    --popover-foreground: var(--midnight-blue);
+    --popover-border: var(--grey-300);
+
+    /* Semantic - Muted */
+    --muted: var(--grey-100);
+    --muted-foreground: var(--grey-600);
+
+    /* Semantic - Scrollbar. Picked for a contrast ratio rather than a role: 1.24:1
+       here, 1.29:1 in the dark block. Change one and re-measure the other. */
+    --scrollbar-thumb: var(--grey-300);
+
+    /* Semantic - Destructive */
+    --destructive: var(--error);
+    --destructive-hover: #b00000;
+    --destructive-foreground: var(--white);
+
+    /* ========================================
+     BORDER RADIUS - SCALE
+     ======================================== */
+    --radius-none: 0px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+    --radius-3xl: 32px;
+    --radius-full: 100px;
+    --radius-circle: 50%;
+
+    /* ========================================
+     BORDER WIDTH - SCALE
+     ======================================== */
+    --border-0: 0px;
+    --border-1: 1px;
+    --border-2: 2px;
+    --border-4: 4px;
+    --border-8: 8px;
+
+    /* ========================================
+     TRANSITIONS - DURATIONS + EASINGS
+     ======================================== */
+    /* Durations */
+    --duration-75: 75ms;
+    --duration-100: 100ms;
+    --duration-150: 150ms;
+    --duration-200: 200ms;
+    --duration-300: 300ms;
+    --duration-500: 500ms;
+    --duration-700: 700ms;
+    --duration-1000: 1000ms;
+
+    /* Easings */
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-snap: cubic-bezier(0.65, 0, 0.35, 1);
+
+    /* ========================================
+     Z-INDEX - SCALE
+     ======================================== */
+    --z-0: 0;
+    --z-10: 10;
+    --z-20: 20;
+    --z-30: 30;
+    --z-40: 40;
+    --z-50: 50;
+    --z-auto: auto;
+}
+
+/* ========================================
+   DARK MODE - SEMANTIC TOKEN OVERRIDES
+
+   Transcribed from the design system's themes.css, which targets
+   [data-theme="dark"] where this repo keys off .dark. ADR 0007.
+   ======================================== */
+.dark {
+    /* Semantic - Background */
+    --background: var(--navy-950);
+    --background-alt: var(--navy-800);
+    --background-subtle: var(--navy-900);
+    --background-muted: var(--navy-800);
+    --background-emphasis: var(--navy-700);
+
+    /* Semantic - Foreground */
+    --foreground: var(--navy-50);
+    --foreground-alt: var(--grey-50);
+    --foreground-muted: var(--navy-100);
+    --foreground-subtle: var(--navy-200);
+
+    /* Semantic - Borders */
+    --border: rgba(255, 255, 255, 0.16);
+    --border-muted: rgba(255, 255, 255, 0.09);
+    --border-emphasis: rgba(255, 255, 255, 0.3);
+    --border-input: rgba(255, 255, 255, 0.55);
+    --border-input-hover: rgba(255, 255, 255, 0.7);
+    --border-focus: var(--yellow);
+
+    /* Semantic - Brand Colors. --primary lifts to a readable mid-blue rather
+       than swapping to yellow, which is what keeps it distinct from --secondary. */
+    --primary: var(--navy-400);
+    --primary-hover: var(--navy-300);
+    --primary-foreground: var(--white);
+
+    --secondary: var(--yellow);
+    --secondary-hover: var(--orange);
+    --secondary-foreground: var(--midnight-blue);
+
+    --accent: var(--navy-600);
+    --accent-hover: var(--navy-500);
+    --accent-foreground: var(--navy-50);
+
+    /* Semantic - Interactive */
+    --ring: var(--navy-300);
+    --ring-offset: var(--navy-950);
+    --hover-overlay: rgba(255, 255, 255, 0.06);
+    --active-overlay: rgba(255, 255, 255, 0.12);
+
+    /* Semantic - Surfaces */
+    --surface: var(--navy-800);
+    --surface-raised: var(--navy-600);
+    --surface-overlay: var(--navy-800);
+    --surface-sunken: var(--navy-900);
+
+    /* Semantic - Scrim (dark on both canvases; deeper here, because the navy-950
+       canvas is already most of the way to the light theme's scrim and 48% of a
+       near-black over it separates nothing) */
+    --scrim: rgba(0, 0, 0, 0.6);
+
+    /* Semantic - Glass (--glass-blur is theme-independent) */
+    --surface-glass: rgba(10, 39, 64, 0.55);
+    --border-glass: rgba(255, 255, 255, 0.14);
+
+    /* Semantic - Cards/Popovers */
+    --card-background: var(--navy-700);
+    --card-foreground: var(--navy-50);
+    --card-border: rgba(255, 255, 255, 0.16);
+
+    --popover-background: var(--navy-700);
+    --popover-foreground: var(--navy-50);
+    --popover-border: rgba(255, 255, 255, 0.16);
+
+    /* Status tints — darkened so the *-light backgrounds read as panels on the
+       dark canvas instead of near-white blocks, with the *-strong text lifted to
+       stay legible on them. */
+    --success-light: #0e2a1d;
+    --warning-light: #2c2410;
+    --error-light: #2e1414;
+    --info-light: #0d2440;
+
+    --success-strong: #5fd699;
+    --warning-strong: #f3b33e;
+    --error-strong: #ff7a7a;
+    --info-strong: #6fa0ff;
+
+    /* Semantic - Muted */
+    --muted: var(--navy-600);
+    --muted-foreground: var(--navy-100);
+
+    /* Semantic - Scrollbar. The same neutral five steps darker, which is what it
+       takes to read the same against navy-950: 1.29:1 here against 1.24:1 there. */
+    --scrollbar-thumb: var(--grey-800);
+
+    /* Semantic - Destructive. Lifted like every other semantic colour here, because the
+       light red has to do three jobs and the dark one could only do the first: fill (5.23:1
+       under white ink), boundary (2.82:1 on a card, under 1.4.11's 3:1) and message text
+       (3.57:1, under AA). No single red carries white ink and reads as body text at once —
+       the windows do not overlap — so the ink flips instead, the way --secondary already
+       pairs yellow with --midnight-blue. Now 5.85 / 7.39 / 6.08. Hover steps 1.37, matching
+       the 1.41 the light theme steps by. */
+    --destructive: var(--error-strong);
+    --destructive-hover: #ffa8a8;
+    --destructive-foreground: var(--midnight-blue);
+
+    color-scheme: dark;
+
+    /* Shadows (Increased opacity for visibility in dark mode) */
+    --shadow-2xs: 0px 1px 0px 1px rgba(0, 0, 0, 0.3);
+    --shadow-xs: 0px 1px 0px 0px rgba(0, 0, 0, 0.5) inset;
+    --shadow-sm: 0px 2px 12px 0px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0px 2px 36px 0px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0px 7px 12px 3px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0px 2px 0px 0px rgba(0, 0, 0, 0.2);
+    --shadow-2xl: 0px 0px 0px 3px rgba(24, 24, 27, 0.4);
+    --shadow-inner: 0px 1px 0px 0px rgba(0, 0, 0, 0.5) inset;
+
+    /* Component shadows (Increased opacity) */
+    --shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.4);
+    --shadow-card-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.3);
+    --shadow-popover: 0px 7px 12px 3px rgba(0, 0, 0, 0.3);
+    --shadow-dropdown: 0px 2px 12px 0px rgba(0, 0, 0, 0.4);
+    --shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.2);
+    --shadow-kbd: 0px 2px 0px 0px rgba(255, 255, 255, 0.07);
+    /* Keyed to the lifted --destructive above: the light red glow reads as a dark smudge
+       under a button that is no longer that colour. */
+    --shadow-btn-destructive: 0 4px 12px rgba(255, 122, 122, 0.26);
+    --shadow-btn-destructive-hover: 0 9px 22px rgba(255, 122, 122, 0.34);
+}
+
+/* Tailwind 4 Theme Integration */
+@theme inline {
+    /* ========================================
+	 BREAKPOINTS (Mobile-first, industry standard)
+	 ======================================== */
+    --breakpoint-xs: 480px; /* Large phones */
+    --breakpoint-sm: 640px; /* Small tablets */
+    --breakpoint-md: 768px; /* Tablets */
+    --breakpoint-lg: 1024px; /* Small desktops */
+    --breakpoint-xl: 1280px; /* Large desktops */
+    --breakpoint-2xl: 1440px; /* Wide screens */
+
+    /* ========================================
+     FONT FAMILIES
+     ======================================== */
+    --font-sans: var(--font-secondary);
+    --font-heading: var(--font-primary);
+    --font-mono: var(--font-mono);
+    --font-display: var(--font-primary);
+    --font-poppins: var(--font-primary);
+    --font-noto-sans: var(--font-secondary);
+
+    /* ========================================
+     FONT SIZES
+     ======================================== */
+    --font-size-xs: var(--text-xs);
+    --font-size-sm: var(--text-sm);
+    --font-size-md: var(--text-md);
+    --font-size-lg: var(--text-lg);
+    --font-size-xl: var(--text-xl);
+    --font-size-2xl: var(--text-2xl);
+    --font-size-3xl: var(--text-3xl);
+    --font-size-4xl: var(--text-4xl);
+    --font-size-5xl: var(--text-5xl);
+    --font-size-6xl: var(--text-6xl);
+    --font-size-7xl: var(--text-7xl);
+
+    /* ========================================
+     BRAND COLORS
+     ======================================== */
+    --color-blue: var(--blue);
+    --color-dark-blue: var(--dark-blue);
+    --color-midnight-blue: var(--midnight-blue);
+    --color-light-blue: var(--light-blue);
+    --color-blue-grey: var(--blue-grey);
+    --color-yellow: var(--yellow);
+    --color-orange: var(--orange);
+    --color-white: var(--white);
+    --color-black: var(--black);
+    --color-light-grey: var(--light-grey);
+    --color-cyan-bluish-gray: var(--cyan-bluish-gray);
+
+    /* ========================================
+     GREY SCALE
+     ======================================== */
+    --color-grey-50: var(--grey-50);
+    --color-grey-100: var(--grey-100);
+    --color-grey-200: var(--grey-200);
+    --color-grey-300: var(--grey-300);
+    --color-grey-400: var(--grey-400);
+    --color-grey-500: var(--grey-500);
+    --color-grey-600: var(--grey-600);
+    --color-grey-700: var(--grey-700);
+    --color-grey-800: var(--grey-800);
+    --color-grey-900: var(--grey-900);
+    --color-grey-950: var(--grey-950);
+
+    /* ========================================
+     STATUS COLORS
+     ======================================== */
+    --color-success: var(--success);
+    --color-success-light: var(--success-light);
+    --color-success-strong: var(--success-strong);
+    --color-warning: var(--warning);
+    --color-warning-light: var(--warning-light);
+    --color-warning-strong: var(--warning-strong);
+    --color-error: var(--error);
+    --color-error-light: var(--error-light);
+    --color-error-strong: var(--error-strong);
+    --color-info: var(--info);
+    --color-info-light: var(--info-light);
+    --color-info-strong: var(--info-strong);
+
+    /* ========================================
+     SEMANTIC COLORS - BACKGROUNDS
+     ======================================== */
+    --color-background: var(--background);
+    --color-background-alt: var(--background-alt);
+    --color-background-subtle: var(--background-subtle);
+    --color-background-muted: var(--background-muted);
+    --color-background-emphasis: var(--background-emphasis);
+
+    /* ========================================
+     SEMANTIC COLORS - FOREGROUNDS
+     ======================================== */
+    --color-foreground: var(--foreground);
+    --color-foreground-alt: var(--foreground-alt);
+    --color-foreground-muted: var(--foreground-muted);
+    --color-foreground-subtle: var(--foreground-subtle);
+
+    /* ========================================
+     SEMANTIC COLORS - BORDERS
+     ======================================== */
+    --color-border: var(--border);
+    --color-border-muted: var(--border-muted);
+    --color-border-emphasis: var(--border-emphasis);
+    --color-border-input: var(--border-input);
+    --color-border-input-hover: var(--border-input-hover);
+    --color-border-focus: var(--border-focus);
+    --color-border-glass: var(--border-glass);
+
+    /* ========================================
+     SEMANTIC COLORS - BRAND
+     ======================================== */
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-hover: var(--secondary-hover);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-hover: var(--accent-hover);
+    --color-accent-foreground: var(--accent-foreground);
+
+    /* ========================================
+     SEMANTIC COLORS - INTERACTIVE
+     ======================================== */
+    --color-ring: var(--ring);
+    --color-ring-offset: var(--ring-offset);
+    --color-hover-overlay: var(--hover-overlay);
+    --color-active-overlay: var(--active-overlay);
+
+    /* ========================================
+     SEMANTIC COLORS - SURFACES
+     ======================================== */
+    --color-surface: var(--surface);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-overlay: var(--surface-overlay);
+    --color-surface-sunken: var(--surface-sunken);
+    --color-surface-glass: var(--surface-glass);
+    --color-scrim: var(--scrim);
+
+    /* ========================================
+     SEMANTIC COLORS - CARDS/POPOVERS
+     ======================================== */
+    --color-card-background: var(--card-background);
+    --color-card-foreground: var(--card-foreground);
+    --color-card-border: var(--card-border);
+
+    --color-popover-background: var(--popover-background);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover-border: var(--popover-border);
+
+    /* ========================================
+     SEMANTIC COLORS - MUTED/DESTRUCTIVE
+     ======================================== */
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-hover: var(--destructive-hover);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    /* ========================================
+     SHADOWS - SCALE
+     ======================================== */
+    --shadow-2xs: var(--shadow-2xs);
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+    --shadow-2xl: var(--shadow-2xl);
+    --shadow-inner: var(--shadow-inner);
+    --shadow-subtle: var(--shadow-subtle);
+    --shadow-medium: var(--shadow-medium);
+
+    /* ========================================
+     SHADOWS - COMPONENTS
+     ======================================== */
+    --shadow-card: var(--shadow-card);
+    --shadow-card-elevated: var(--shadow-card-elevated);
+    --shadow-popover: var(--shadow-popover);
+    --shadow-dropdown: var(--shadow-dropdown);
+    --shadow-btn: var(--shadow-btn);
+    --shadow-btn-default: var(--shadow-btn-default);
+    --shadow-btn-default-hover: var(--shadow-btn-default-hover);
+    --shadow-btn-accent: var(--shadow-btn-accent);
+    --shadow-btn-accent-hover: var(--shadow-btn-accent-hover);
+    --shadow-btn-destructive: var(--shadow-btn-destructive);
+    --shadow-btn-destructive-hover: var(--shadow-btn-destructive-hover);
+    --shadow-kbd: var(--shadow-kbd);
+
+    /* ========================================
+     EASINGS
+     ======================================== */
+    --ease-out-soft: var(--ease-out-soft);
+    --ease-snap: var(--ease-snap);
+
+    /* ========================================
+     BORDER RADIUS
+     ======================================== */
+    --radius-none: var(--radius-none);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+    --radius-2xl: var(--radius-2xl);
+    --radius-3xl: var(--radius-3xl);
+    --radius-full: var(--radius-full);
+    --radius-circle: var(--radius-circle);
+
+    /* ========================================
+     GRADIENTS (as background-image)
+     ======================================== */
+    --background-image-gradient-orange: var(--gradient-orange);
+    --background-image-gradient-blue: var(--gradient-blue);
+    --background-image-gradient-orange-smooth: var(--gradient-orange-smooth);
+    --background-image-gradient-blue-smooth: var(--gradient-blue-smooth);
+}
+
+/* Font sizes, in the namespace that actually generates utilities. The
+   --font-size-* block above is not a Tailwind v4 namespace and emits nothing;
+   the rest of the ramp works only because the stock --text-* names are shadowed
+   from :root. These two steps have no stock name to shadow, so without this
+   block the Button, Badge and Pagination size ramps each collapse two adjacent
+   steps onto one value. */
+@theme {
+    --text-2xs: 11px;
+    --text-md: 14px;
+}
+
+/* Grid templates, for the layouts/ grid family. Five of Grid's eight shapes have no
+   stock utility, and a template is not a runtime-open value, so the inline-style
+   exception does not reach it either. --grid-template-columns-* is a real v4
+   namespace despite its absence from the published grid-cols-* table, so each entry
+   is an ordinary token utility: grid-cols-sidebar, md:grid-cols-asymmetric. They
+   cannot live on the component — a @theme block inside a Svelte <style> ships
+   verbatim and generates no utility at all.
+
+   split and thirds are deliberately absent: grid-cols-2 and grid-cols-3 already say
+   it, and a token shadowing a stock utility is the --font-size-* mistake again.
+
+   rem rather than the reference's px, at the repo's 16px root: 15rem is its 240px
+   track, 16.25rem its 260px rail, 20rem its 320px cap and 40rem its 640px measure,
+   and 12.5rem AppShell's 200px rail.
+
+   AppShell owns the last six and is the only member with rows entries. Three shapes
+   per axis because it collapses the track of a region it was not passed, so the
+   template names only the survivors and the suffix says which. */
+@theme {
+    --grid-template-columns-auto-fit: repeat(auto-fit, minmax(15rem, 1fr));
+    --grid-template-columns-strategies: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    --grid-template-columns-sidebar: minmax(0, 16.25rem) minmax(0, 1fr);
+    --grid-template-columns-asymmetric: minmax(0, 2fr) minmax(0, 1fr);
+    --grid-template-columns-asymmetric-reverse: minmax(0, 1fr) minmax(0, 2fr);
+    --grid-template-columns-stack-rail: minmax(0, 1fr) minmax(15rem, 20rem);
+    --grid-template-columns-centered: minmax(0, 40rem);
+    --grid-template-columns-app-shell: 12.5rem minmax(0, 1fr) 12.5rem;
+    --grid-template-columns-app-shell-start: 12.5rem minmax(0, 1fr);
+    --grid-template-columns-app-shell-end: minmax(0, 1fr) 12.5rem;
+    --grid-template-rows-app-shell: auto 1fr auto;
+    --grid-template-rows-app-shell-header: auto 1fr;
+    --grid-template-rows-app-shell-footer: 1fr auto;
+}
+
+/* Component animations, for InputOTP. Its reference injects these keyframes at
+   runtime, where no utility can reach them and Tailwind's scanner never sees
+   them; in the --animate-* namespace they are ordinary classes the linter
+   resolves, with the keyframes alongside them as v4 requires.
+
+   No .dark block, unlike a colour — a motion is the same on either canvas. The
+   reference's durations are 0.45s / 1s / 0.2s, so the shake snaps to the 500ms
+   step and the other two land on theirs exactly. */
+@theme {
+    --animate-otp-shake: otp-shake var(--duration-500) var(--ease-out-soft);
+    --animate-otp-caret: otp-caret var(--duration-1000) steps(1, end) infinite;
+    --animate-otp-digit: otp-digit var(--duration-200) var(--ease-out-soft) both;
+
+    @keyframes otp-shake {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        15% {
+            transform: translateX(-5px);
+        }
+        30% {
+            transform: translateX(5px);
+        }
+        45% {
+            transform: translateX(-3px);
+        }
+        60% {
+            transform: translateX(3px);
+        }
+        80% {
+            transform: translateX(-1px);
+        }
+    }
+
+    @keyframes otp-caret {
+        0%,
+        45% {
+            opacity: 1;
+        }
+        55%,
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes otp-digit {
+        from {
+            transform: translateY(10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
+
+@theme {
+    --animate-shimmer: shimmer 1.4s linear infinite;
+    --animate-rise: rise 240ms var(--ease-out-soft) both;
+
+    @keyframes shimmer {
+        from {
+            background-position: -140% 0;
+        }
+        to {
+            background-position: 240% 0;
+        }
+    }
+
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* Low specificity lets a caller's transition utility override this property list. */
+@utility button-motion {
+    :where(&) {
+        transition:
+            transform var(--duration-200) var(--ease-out-soft),
+            translate var(--duration-200) var(--ease-out-soft),
+            scale var(--duration-200) var(--ease-out-soft),
+            box-shadow var(--duration-200) var(--ease-out-soft),
+            background-color var(--duration-200) ease-in-out,
+            color var(--duration-200) var(--ease-out-soft),
+            border-color var(--duration-200) var(--ease-out-soft),
+            opacity var(--duration-200) var(--ease-out-soft);
+    }
+}
+
+@utility skeleton {
+    background-color: var(--background-emphasis);
+    background-image: linear-gradient(90deg, transparent, var(--background-muted), transparent);
+    background-size: 200% 100%;
+}
+
+/* Accordion panel height, on the same footing as the OTP block above: the height a
+   panel animates to is only known at runtime, and bits-ui publishes it on the open
+   panel as --bits-accordion-content-height. */
+@theme {
+    --animate-accordion-open: accordion-open var(--duration-300) var(--ease-out-soft);
+    --animate-accordion-close: accordion-close var(--duration-300) var(--ease-out-soft);
+
+    @keyframes accordion-open {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--bits-accordion-content-height);
+        }
+    }
+
+    @keyframes accordion-close {
+        from {
+            height: var(--bits-accordion-content-height);
+        }
+        to {
+            height: 0;
+        }
+    }
+}
+
+/* Marquee's two runs. The track carries two copies of the content and travels
+   exactly half its own length, which is one copy plus the loop gap; `right` and
+   `down` are those same two runs played in reverse, so four classes need only two
+   keyframe sets.
+
+   Not `@theme --animate-*`, unlike the two blocks above, and the difference is
+   load-bearing rather than stylistic. `speed` is pixels per second, so the
+   duration is only known once the real content has been measured, and the
+   component sets it on the track as `--marquee-duration`. A `--animate-*` entry
+   holding `var(--marquee-duration)` is a custom property declared on `:root`, and
+   a custom property substitutes its own `var()`s **where it is declared** — at
+   `:root`, where that property does not exist. The whole declaration is then
+   invalid at computed-value time, the element inherits an empty value, and
+   `animation-name` computes to `none` while lint, `check` and the compiled
+   stylesheet all look perfectly correct. `--animate-accordion-*` gets away with
+   its runtime value because that one sits inside the *keyframes*, which are
+   evaluated on the animating element. A duration cannot. Measured 2026-08-18.
+
+   As `@utility` the declaration lands on the element instead, where the track's
+   own `--marquee-duration` is in scope. The keyframes move out of `@theme` with
+   it: keyframes declared in there are emitted only when a `--animate-*` variable
+   naming them is used, so with no such variable they would be dropped. Tailwind
+   passes a top-level `@keyframes` through untouched. */
+@keyframes marquee-x {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes marquee-y {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-50%);
+    }
+}
+
+@utility animate-marquee-left {
+    animation: marquee-x var(--marquee-duration) linear infinite;
+}
+
+@utility animate-marquee-right {
+    animation: marquee-x var(--marquee-duration) linear infinite reverse;
+}
+
+@utility animate-marquee-up {
+    animation: marquee-y var(--marquee-duration) linear infinite;
+}
+
+@utility animate-marquee-down {
+    animation: marquee-y var(--marquee-duration) linear infinite reverse;
+}
+
+/* Tailwind v4 ships no `animation-play-state` utility, and pausing by swapping in
+   `animate-none` does not pause — it drops the animation and snaps the content
+   back to frame one, which is a jump rather than a freeze. Named for the property
+   rather than as the bare adjective `paused`: this is the shared token layer, and
+   a one-word class claims that word for every component that comes after it. */
+@utility animation-paused {
+    animation-play-state: paused;
+}
+
+/* A fixed-length edge fade, which Tailwind's own `mask-x-*` cannot express: its
+   from-position is measured from the *opposite* edge, so `mask-x-from-16` holds
+   the outer 64px opaque and fades everything else — the exact inverse. 4rem is
+   the reference's 64px. Black and transparent here are mask channels rather than
+   ink, which is why no theme token belongs in them and why the fade works over
+   any backdrop, on either canvas, where a painted gradient would not.
+
+   The 20% cap is that same measurement taken the other way: 64px is an edge on a
+   1200px ticker and most of the box on a 142px vertical column, where it left one
+   of three rows fully opaque. Whichever is shorter wins. */
+@utility mask-fade-x {
+    mask-image: linear-gradient(to right, transparent 0, black min(4rem, 20%), black calc(100% - min(4rem, 20%)), transparent 100%);
+}
+
+@utility mask-fade-y {
+    mask-image: linear-gradient(to bottom, transparent 0, black min(4rem, 20%), black calc(100% - min(4rem, 20%)), transparent 100%);
+}
+
+/* Spinner's six marks and the five named steps of its extent. Every measurement
+   derives from `--spinner-size` and every duration from `--spinner-speed`, so one
+   class carries the whole geometry of a size and an explicit px extent needs no
+   second mechanism.
+
+   `@utility` rather than `@theme --animate-*`, unlike the OTP and accordion blocks
+   above, and the difference is load-bearing. An `--animate-*` entry naming
+   `var(--spinner-speed)` is a custom property declared on `:root`, and a custom
+   property substitutes its own `var()`s where it is declared — at `:root`, where no
+   spinner has declared one. The declaration is then invalid at computed-value time
+   and `animation-name` computes to `none`, while lint, `check` and the compiled
+   stylesheet all look correct. `--animate-accordion-*` escapes this only because its
+   runtime value sits inside the *keyframes*, which are evaluated on the animating
+   element; a duration is not. The keyframes therefore sit outside `@theme`, which
+   emits them only when an `--animate-*` variable names them.
+
+   Reduced motion nests inside each mark rather than riding a `motion-reduce:` class,
+   because the override has to reach the multi-element marks' children and a separate
+   utility would tie on specificity and be settled by emission order. It slows the
+   mark rather than stopping it; `Spinner.md` records why.
+
+   These twelve are Spinner's own. Each reads two properties the component always
+   sets and neither carries a `var()` fallback, so on any other element a mark draws
+   at no size and stands still — reach for `<Spinner />`. */
+@keyframes spinner-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner-dot {
+    0%,
+    80%,
+    100% {
+        transform: scale(0.55);
+        opacity: 0.35;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spinner-bar {
+    0%,
+    100% {
+        transform: scaleY(0.35);
+        opacity: 0.45;
+    }
+    50% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spinner-ripple {
+    0% {
+        transform: scale(0.25);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes spinner-spoke {
+    0%,
+    45% {
+        opacity: 1;
+    }
+    60%,
+    100% {
+        opacity: 0.18;
+    }
+}
+
+/* The reduced-motion mark, for all six alike: ink fading, no transform at all. */
+@keyframes spinner-breathe {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/* The reference's own five steps. They set the extent and nothing else. */
+@utility spinner-xs {
+    --spinner-size: 14px;
+}
+
+@utility spinner-sm {
+    --spinner-size: 16px;
+}
+
+@utility spinner-md {
+    --spinner-size: 20px;
+}
+
+@utility spinner-lg {
+    --spinner-size: 28px;
+}
+
+@utility spinner-xl {
+    --spinner-size: 40px;
+}
+
+@utility spinner-gap {
+    gap: max(6px, calc(var(--spinner-size) * 0.45));
+}
+
+@utility spinner-ring {
+    --spinner-stroke: max(2px, calc(var(--spinner-size) * 0.11));
+
+    display: block;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    border: var(--spinner-stroke) solid color-mix(in srgb, currentcolor 18%, transparent);
+    border-top-color: currentcolor;
+    border-radius: var(--radius-full);
+    animation: spinner-rotate calc(0.7s / var(--spinner-speed)) linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: spinner-breathe calc(2.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+    }
+}
+
+/* A conic sweep masked into a ring, so the tail fades continuously. */
+@utility spinner-arc {
+    --spinner-stroke: max(2px, calc(var(--spinner-size) * 0.11));
+
+    display: block;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    background: conic-gradient(from 0deg, transparent 5%, currentcolor);
+    border-radius: var(--radius-full);
+    mask-image: radial-gradient(farthest-side, transparent calc(100% - var(--spinner-stroke)), black calc(100% - var(--spinner-stroke)));
+    animation: spinner-rotate calc(0.85s / var(--spinner-speed)) linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: spinner-breathe calc(2.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+    }
+}
+
+@utility spinner-dots {
+    --spinner-dot: max(4px, calc(var(--spinner-size) * 0.28));
+
+    display: inline-flex;
+    align-items: center;
+    height: var(--spinner-size);
+    gap: calc(var(--spinner-dot) * 0.55);
+
+    & > * {
+        width: var(--spinner-dot);
+        height: var(--spinner-dot);
+        background: currentcolor;
+        border-radius: var(--radius-full);
+        animation: spinner-dot calc(1.1s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+    }
+
+    /* The stagger scales with the rate, unlike the reference's fixed offsets: moving
+       the duration alone would change the phase between the dots, which is the
+       character of the mark rather than its speed. Same for the three marks below. */
+    & > *:nth-child(2) {
+        animation-delay: calc(0.14s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(3) {
+        animation-delay: calc(0.28s / var(--spinner-speed));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: spinner-breathe calc(2.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+
+        & > * {
+            animation: none;
+        }
+    }
+}
+
+@utility spinner-bars {
+    --spinner-bar: max(2px, calc(var(--spinner-size) * 0.16));
+
+    display: inline-flex;
+    align-items: center;
+    height: var(--spinner-size);
+    gap: max(2px, calc(var(--spinner-bar) * 0.7));
+
+    & > * {
+        width: var(--spinner-bar);
+        height: var(--spinner-size);
+        background: currentcolor;
+        border-radius: var(--radius-full);
+        animation: spinner-bar calc(0.95s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+    }
+
+    & > *:nth-child(2) {
+        animation-delay: calc(0.11s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(3) {
+        animation-delay: calc(0.22s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(4) {
+        animation-delay: calc(0.33s / var(--spinner-speed));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: spinner-breathe calc(2.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+
+        & > * {
+            animation: none;
+        }
+    }
+}
+
+@utility spinner-pulse {
+    --spinner-stroke: max(2px, calc(var(--spinner-size) * 0.11));
+
+    position: relative;
+    display: block;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+
+    & > * {
+        position: absolute;
+        inset: 0;
+        border: var(--spinner-stroke) solid currentcolor;
+        border-radius: var(--radius-full);
+        animation: spinner-ripple calc(1.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+    }
+
+    & > *:nth-child(2) {
+        animation-delay: calc(0.7s / var(--spinner-speed));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: spinner-breathe calc(2.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+
+        & > * {
+            animation: none;
+        }
+    }
+}
+
+/* Eight spokes around one hub. `translateX(-50%)` is written after the rotation and
+   applied after it, centring the spoke and then rotating about the circle's true
+   centre — the order matters, and is the reference's own. */
+@utility spinner-spokes {
+    --spinner-spoke: max(2px, calc(var(--spinner-size) * 0.13));
+
+    position: relative;
+    display: block;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+
+    & > * {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: var(--spinner-spoke);
+        height: calc(var(--spinner-size) * 0.26);
+        background: currentcolor;
+        border-radius: var(--radius-full);
+        transform-origin: 50% calc(var(--spinner-size) / 2);
+        animation: spinner-spoke calc(0.9s / var(--spinner-speed)) linear infinite;
+    }
+
+    & > *:nth-child(1) {
+        transform: translateX(-50%) rotate(0deg);
+    }
+
+    & > *:nth-child(2) {
+        transform: translateX(-50%) rotate(45deg);
+        animation-delay: calc(0.1125s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(3) {
+        transform: translateX(-50%) rotate(90deg);
+        animation-delay: calc(0.225s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(4) {
+        transform: translateX(-50%) rotate(135deg);
+        animation-delay: calc(0.3375s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(5) {
+        transform: translateX(-50%) rotate(180deg);
+        animation-delay: calc(0.45s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(6) {
+        transform: translateX(-50%) rotate(225deg);
+        animation-delay: calc(0.5625s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(7) {
+        transform: translateX(-50%) rotate(270deg);
+        animation-delay: calc(0.675s / var(--spinner-speed));
+    }
+
+    & > *:nth-child(8) {
+        transform: translateX(-50%) rotate(315deg);
+        animation-delay: calc(0.7875s / var(--spinner-speed));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: spinner-breathe calc(2.4s / var(--spinner-speed)) var(--ease-out-soft) infinite;
+
+        & > * {
+            animation: none;
+        }
+    }
+}
+
+/* NotFound's dial, on the same footing as the two blocks above: the reference injects
+   these keyframes at runtime, where no utility can reach them and Tailwind's scanner
+   never sees them. The drift names its own 7s because the --duration-* scale stops at
+   1s, and the swing has to slow at both ends, which --ease-out-soft cannot do. */
+@theme {
+    --animate-not-found-drift: not-found-drift 7s var(--ease-in-out) infinite;
+
+    @keyframes not-found-drift {
+        0%,
+        100% {
+            transform: rotate(-7deg);
+        }
+        50% {
+            transform: rotate(7deg);
+        }
+    }
+}
+
+/* Tailwind v4 ships no scrollbar utilities. The standard pair, as `html` already
+   uses below, which beats the universal `::-webkit-scrollbar` block on any element
+   declaring it. `--border`, not `--border-muted`: the muted step is invisible on
+   the light canvas. Both measurements are in
+   `src/lib/components/layouts/scroll-area/ScrollArea.md`. */
+@utility scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+/* Tailwind v4 ships no `scrollbar-gutter` utility either. A classic scrollbar takes its
+   width out of the content box, so a region that scrolls on one route and not on the next
+   redraws everything inside it — footer included — 15px narrower. The gutter is reserved
+   on both, and costs nothing where the platform draws the scrollbar over the content. */
+@utility scrollbar-gutter-stable {
+    scrollbar-gutter: stable;
+}
+
+/* Base Styles */
+@layer base {
+    /* ========================================
+     GLOBAL DEFAULTS
+     ======================================== */
+    *,
+    ::after,
+    ::before,
+    ::backdrop {
+        border-color: var(--border, currentColor);
+    }
+
+    /* ========================================
+     HTML
+     ======================================== */
+    /* A surface token cannot draw the thumb: `--muted`, which used to, is lighter than
+       the background in both themes, so it read as raised on navy-950 and as nothing on
+       light-blue. `--scrollbar-thumb` is contrast-matched per theme instead — two
+       canvases this far apart cannot share a colour and share a weight.
+       `--muted-foreground` stays on hover, where a theme token gains contrast in both
+       directions. */
+    html {
+        height: 100%;
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        font-variation-settings: normal;
+        scrollbar-color: var(--scrollbar-thumb) transparent;
+        scrollbar-width: thin;
+    }
+
+    /* Every in-page jump rides on the rule above, because a `scrollTo` passing no
+       `behavior` takes the scrolling element's own. A `behavior: "smooth"` literal in
+       JS is reachable by no media query; this is, and the jump loses a reader who
+       asked for less motion nothing. */
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    /* ========================================
+     BODY
+     ======================================== */
+    body {
+        height: 100%;
+        font-family: var(--font-secondary), var(--font-system);
+        background-color: var(--background);
+        color: var(--foreground);
+        line-height: var(--leading-normal);
+        font-feature-settings:
+            "rlig" 1,
+            "calt" 1;
+    }
+
+    /* ========================================
+     HEADINGS
+     ======================================== */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-primary), var(--font-system);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--leading-tight);
+        color: var(--foreground);
+    }
+
+    h1 {
+        font-size: var(--text-7xl);
+        font-weight: var(--font-weight-black);
+    }
+
+    h2 {
+        font-size: var(--text-7xl);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    h3 {
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-bold);
+    }
+
+    h4 {
+        font-size: var(--text-4xl);
+        font-weight: var(--font-weight-bold);
+    }
+
+    h5 {
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    h6 {
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    /* ========================================
+     LINKS
+     ======================================== */
+    a {
+        color: var(--foreground);
+        text-decoration: none;
+        font-weight: var(--font-weight-medium);
+        transition: color var(--duration-200) var(--ease-in-out);
+    }
+
+    a:hover {
+        color: var(--primary-hover);
+    }
+
+    /* ========================================
+     SELECTION
+     ======================================== */
+    ::selection {
+        background-color: var(--yellow);
+        color: var(--black);
+    }
+
+    /* ========================================
+     FOCUS
+     ======================================== */
+    :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
+
+    /* ========================================
+     SCROLL REVEAL
+     ======================================== */
+    /* Hidden until the reveal attachment owns the element, so the server-rendered
+       page does not flash the end state. app.html restores it without JS. */
+    [data-reveal] {
+        visibility: hidden;
+    }
+
+    /* ========================================
+     WEBKIT SCROLLBAR
+     ======================================== */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Subjectless, so it draws every scroller that does not declare the standard
+       properties — same thumb, and a transparent track so a scrollbar inside a surface
+       panel does not paint the page canvas through it. */
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--muted-foreground);
+    }
+}
