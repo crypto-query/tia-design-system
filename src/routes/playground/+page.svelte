@@ -1,7 +1,20 @@
 <script lang="ts">
     import { resolve } from "$app/paths";
 
-    const pages = ["button", "card", "alert", "spinner", "checkbox", "radio-group", "toggle", "tooltip", "select", "table", "kbd"] as const;
+    const pages = [
+        "button",
+        "card",
+        "alert",
+        "spinner",
+        "checkbox",
+        "radio-group",
+        "toggle",
+        "tooltip",
+        "select",
+        "table",
+        "kbd",
+        "chart"
+    ] as const;
 </script>
 
 <svelte:head>

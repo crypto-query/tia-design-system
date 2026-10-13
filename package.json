@@ -20,6 +20,8 @@
         "./ui/select/Select.svelte": "./src/lib/components/ui/select/Select.svelte",
         "./ui/table/Table.svelte": "./src/lib/components/ui/table/Table.svelte",
         "./ui/kbd/Kbd.svelte": "./src/lib/components/ui/kbd/Kbd.svelte",
+        "./ui/chart/Chart.svelte": "./src/lib/components/ui/chart/Chart.svelte",
+        "./ui/chart/chart-theme": "./src/lib/components/ui/chart/chart-theme.ts",
         "./utils/cn": "./src/lib/utils/cn.ts",
         "./theme.css": "./src/lib/theme.css"
     },

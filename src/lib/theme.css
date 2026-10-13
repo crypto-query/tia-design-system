@@ -133,6 +133,23 @@
     --info-strong: #1d4fd0;
 
     /* ========================================
+     COLORS - CHART SERIES
+     ======================================== */
+    /* Light only by decision: no .dark values until dark mode is in scope. Pairs that share a chart
+       stay >= 11.45 dE2000 under each dichromacy; all are >= 3:1 on white. Re-check before changing one. */
+    --chart-1: #cf801d;
+    --chart-2: #0a315a;
+    --chart-3: #235af3;
+    --chart-4: #659f6a;
+    --chart-5: #c92b75;
+    --chart-6: #826d0f;
+    --chart-7: #137d8e;
+    --chart-8: #6e12a9;
+    --chart-9: #8c1e00;
+    --chart-10: #1f6b40;
+    --chart-11: #a184d3;
+
+    /* ========================================
      COLORS - GRADIENTS
      ======================================== */
     /* Exact gradients from tiainvestor.com (diagonal split style) */
