@@ -6,7 +6,7 @@
 
     let { children }: { children: Snippet } = $props();
 
-    const pages = ["button", "card", "alert", "spinner", "checkbox", "radio-group", "toggle", "tooltip", "table", "kbd"] as const;
+    const pages = ["button", "card", "alert", "spinner", "checkbox", "radio-group", "toggle", "tooltip", "select", "table", "kbd"] as const;
 </script>
 
 <ModeWatcher />
