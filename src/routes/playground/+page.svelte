@@ -11,6 +11,7 @@
         "toggle",
         "tooltip",
         "select",
+        "combobox",
         "table",
         "kbd",
         "chart"
