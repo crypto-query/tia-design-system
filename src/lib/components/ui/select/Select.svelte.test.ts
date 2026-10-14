@@ -1,5 +1,5 @@
 import { cleanup, render, screen, waitFor, within } from "@testing-library/svelte";
-import { userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "@vitest/browser/context";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import Select, { type SelectItem } from "./Select.svelte";
 import Harness from "./Select.test-harness.svelte";
@@ -181,6 +181,25 @@ describe("Select", () => {
             const listbox = await screen.findByRole("listbox");
             expect(container).not.toContainElement(listbox);
             expect(document.body).toContainElement(listbox);
+        });
+    });
+
+    describe("panel width", () => {
+        it("caps the panel at the viewport's free width", async () => {
+            await page.viewport(390, 700);
+            onTestFinished(() => page.viewport(1280, 720));
+
+            // Wider than the viewport, the way a full-width field in a Block can measure.
+            render(Select, { items: plain, label: "Asset", class: "w-150" });
+            await userEvent.click(trigger());
+
+            const panel = (await screen.findByRole("listbox")).closest("[data-select-content]");
+            expect(panel).toBeInstanceOf(HTMLElement);
+            await waitFor(() => {
+                const box = panel?.getBoundingClientRect();
+                expect(box?.left).toBeGreaterThanOrEqual(0);
+                expect(box?.right).toBeLessThanOrEqual(390);
+            });
         });
     });
 

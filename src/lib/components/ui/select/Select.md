@@ -55,13 +55,13 @@ outside the scope and draws unstyled. The prop goes straight to `Select.Portal`'
 
 ## Departures from the Combobox
 
-| Combobox                                                         | Select                                                                                  | Why                                                           |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| search box, `filter`, empty message                              | none                                                                                    | a fixed list; bits-ui typeahead jumps to a row by its `label` |
-| `error`, `errorMessage`, `helperText`                            | none                                                                                    | not needed yet                                                |
-| `width`, `menuWidth`, `maxMenuHeight`, `side`, `align`, `offset` | fixed: trigger width from `class`, panel at the trigger's width, `max-h-72`, below, 6px | no caller needs them yet                                      |
-| `children` form with `ComboboxItem`, `ComboboxGroup`             | data form only, one file                                                                | one export entry                                              |
-| `value: string \| number \| null`                                | `value: string`, `""` for nothing                                                       | the primitive's own type                                      |
+| Combobox                                                         | Select                                                                                                           | Why                                                           |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| search box, `filter`, empty message                              | none                                                                                                             | a fixed list; bits-ui typeahead jumps to a row by its `label` |
+| `error`, `errorMessage`, `helperText`                            | none                                                                                                             | not needed yet                                                |
+| `width`, `menuWidth`, `maxMenuHeight`, `side`, `align`, `offset` | fixed: trigger width from `class`, panel at the trigger's width capped at the free width, `max-h-72`, below, 6px | no caller needs them yet                                      |
+| `children` form with `ComboboxItem`, `ComboboxGroup`             | data form only, one file                                                                                         | one export entry                                              |
+| `value: string \| number \| null`                                | `value: string`, `""` for nothing                                                                                | the primitive's own type                                      |
 
 Only the highlighted row gets the accent fill, with `accent-foreground` text
 and check. The Combobox uses `primary` text there, which reads at 2.9:1 on the

@@ -120,10 +120,11 @@
         cn("pointer-events-none size-3.5 shrink-0 text-foreground-subtle transition-transform duration-200 ease-out", open && "rotate-180")
     );
 
-    // `z-50` is enough: the panel is portalled to the end of its target, so an equal step
-    // later in the document still paints over the header.
+    // `max-w-*` caps the panel at the room floating-ui reports, so a trigger wider than
+    // the viewport's free span cannot push the panel off screen. `z-50` is enough: the
+    // panel is portalled to the end of its target.
     const panelClass =
-        "z-50 flex w-(--bits-select-anchor-width) max-h-(--bits-select-content-available-height) flex-col overflow-hidden rounded-lg border border-border-muted bg-surface shadow-medium outline-hidden";
+        "z-50 flex w-(--bits-select-anchor-width) max-w-(--bits-select-content-available-width) max-h-(--bits-select-content-available-height) flex-col overflow-hidden rounded-lg border border-border-muted bg-surface shadow-medium outline-hidden";
 
     const rowClass = $derived(
         cn(

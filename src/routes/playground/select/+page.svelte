@@ -125,6 +125,17 @@
     </section>
 
     <section class="space-y-3">
+        <h2 class="text-lg font-semibold">Edge to edge</h2>
+        <p class="max-w-3xl text-sm text-foreground-muted">
+            This trigger spans the page from edge to edge. The panel takes the trigger's width, but never more than the free width, so a
+            narrow viewport does not scroll sideways.
+        </p>
+        <div class="-mx-10">
+            <Select items={assets} label="Edge to edge" />
+        </div>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-lg font-semibold">Inside a scoped root</h2>
         <p class="max-w-3xl text-sm text-foreground-muted">
             <code class="font-mono">portalTarget</code> takes an element or a selector, and the panel mounts inside that container rather
