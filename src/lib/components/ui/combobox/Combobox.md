@@ -62,6 +62,8 @@ sideways. The Select still has that defect.
 | trigger is a button with `role="combobox"`      | the ARIA select-only pattern. The trigger is rendered through `child` so it can override the popover's `aria-haspopup="dialog"` with `"listbox"` |
 | `aria-labelledby` to the label                  | as the source; it names the trigger from the visible label                                                                                       |
 | `Command.Root`'s `label` is `searchPlaceholder` | `Command` points the input's `aria-labelledby` at that hidden label, so this is the search box's name                                            |
+| ArrowDown and ArrowUp open the closed trigger   | the select-only pattern; the popover trigger opens only on Enter and Space                                                                       |
+| the chosen row is highlighted on open           | as the Select; `Command.Root`'s `value` is seeded with the choice, so the first row is highlighted only when nothing is chosen                   |
 | empty message is `role="status"`                | a panel that shrinks to nothing reads as the list being gone, not the query missing                                                              |
 | `pointer-coarse` lifts trigger and rows to 44px | the touch floor                                                                                                                                  |
 

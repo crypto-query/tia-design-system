@@ -134,6 +134,16 @@
         open = false;
     }
 
+    // The popover trigger opens only on Enter and Space; the select-only pattern opens on the arrows too.
+    // Bound as a capture handler: a plain `onkeydown` after the spread would replace the popover's own.
+    function openOnArrow(event: KeyboardEvent): void {
+        if (open || (event.key !== "ArrowDown" && event.key !== "ArrowUp")) return;
+
+        event.preventDefault();
+        open = true;
+        onOpenChange?.(true);
+    }
+
     const fieldClass = $derived(
         cn(
             "rounded-md border bg-background-alt text-foreground transition-colors duration-150 ease-out-soft",
@@ -196,6 +206,7 @@
                     aria-labelledby={label ? labelId : undefined}
                     class={fieldClass}
                     id={triggerId}
+                    onkeydowncapture={openOnArrow}
                     role="combobox"
                     type="button">
                     <span class={cn("min-w-0 flex-1 truncate text-left", selectedLabel ? "text-foreground" : "text-foreground-subtle")}>
@@ -207,8 +218,9 @@
         </Popover.Trigger>
         <Popover.Portal to={portalTarget}>
             <Popover.Content align="start" class={panelClass} collisionPadding={12} sideOffset={6}>
-                <!-- `label` names the search box: `Command` points the input's `aria-labelledby` at it. -->
-                <Command.Root class="flex min-h-0 flex-col" filter={score} label={searchPlaceholder} loop>
+                <!-- `label` names the search box: `Command` points the input's `aria-labelledby` at it.
+                     `value` is `Command`'s highlighted row, seeded with the choice; it writes back only locally. -->
+                <Command.Root class="flex min-h-0 flex-col" filter={score} label={searchPlaceholder} loop {value}>
                     <div class={cn("flex shrink-0 items-center border-b border-border-muted", spec.search)}>
                         <Search aria-hidden="true" class={cn("shrink-0 text-foreground-subtle", spec.searchIcon)} />
                         <!-- Keeps the base layer's outline: focus lands here when the panel opens. -->

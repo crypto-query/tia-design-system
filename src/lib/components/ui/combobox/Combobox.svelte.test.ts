@@ -124,6 +124,30 @@ describe("Combobox", () => {
         expect(screen.getByTestId("bound")).toHaveTextContent("value=btc open=false");
     });
 
+    it.each(["{ArrowDown}", "{ArrowUp}"])("opens on %s from the closed trigger, focus in the search box", async (key) => {
+        render(Combobox, { items: instruments, label: "Instrument" });
+        trigger().focus();
+
+        await userEvent.keyboard(key);
+
+        await screen.findByRole("listbox");
+        await waitFor(() => expect(search()).toHaveFocus());
+    });
+
+    it("highlights the chosen row on open", async () => {
+        render(Combobox, { items: instruments, label: "Instrument", value: "btc" });
+        await openPanel();
+
+        await waitFor(() => expect(screen.getByRole("option", { name: /Bitcoin/ })).toHaveAttribute("data-selected"));
+    });
+
+    it("highlights the first row on open when nothing is chosen", async () => {
+        render(Combobox, { items: instruments, label: "Instrument" });
+        await openPanel();
+
+        await waitFor(() => expect(screen.getByRole("option", { name: /E-mini S&P 500/ })).toHaveAttribute("data-selected"));
+    });
+
     it("never lands the keyboard on a disabled row", async () => {
         render(Combobox, { items: instruments, label: "Instrument" });
         await openPanel();
