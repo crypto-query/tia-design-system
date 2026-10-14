@@ -234,7 +234,7 @@
                             )}
                             placeholder={searchPlaceholder} />
                     </div>
-                    <Command.List class="min-h-0 flex-1 overflow-hidden" id={listId}>
+                    <Command.List class="min-h-0 flex-1 overflow-hidden" id={listId} aria-label={label}>
                         <Command.Viewport class="max-h-72 overflow-y-auto p-1.25">
                             <!-- Announced: a panel that shrinks to nothing reads as the list being gone. -->
                             <Command.Empty class="px-3 py-5.5 text-center text-sm/normal text-foreground-subtle" role="status">

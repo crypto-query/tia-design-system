@@ -52,7 +52,7 @@ describe("Combobox", () => {
         render(Combobox, { items: instruments, label: "Instrument" });
         await openPanel();
 
-        expect(screen.getAllByRole("option")).toHaveLength(5);
+        expect(within(screen.getByRole("listbox", { name: "Instrument" })).getAllByRole("option")).toHaveLength(5);
         expect(
             within(screen.getByRole("group", { name: "Futures" }))
                 .getAllByRole("option")
