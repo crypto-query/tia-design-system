@@ -148,6 +148,22 @@ describe("Combobox", () => {
         await waitFor(() => expect(screen.getByRole("option", { name: /E-mini S&P 500/ })).toHaveAttribute("data-selected"));
     });
 
+    it("highlights the first enabled row on open when the chosen row is disabled", async () => {
+        const onValueChange = vi.fn();
+        render(Harness, { items: instruments, label: "Instrument", value: "sol", onValueChange });
+        await openPanel();
+
+        await waitFor(() => expect(screen.getByRole("option", { name: /E-mini S&P 500/ })).toHaveAttribute("data-selected"));
+        expect(screen.getByRole("option", { name: /Solana/ })).not.toHaveAttribute("data-selected");
+
+        await userEvent.keyboard("{ArrowDown}");
+        await waitFor(() => expect(screen.getByRole("option", { name: /E-mini Nasdaq 100/ })).toHaveAttribute("data-selected"));
+        await userEvent.keyboard("{Enter}");
+
+        await waitFor(() => expect(onValueChange).toHaveBeenCalledWith("nq"));
+        expect(onValueChange).not.toHaveBeenCalledWith("sol");
+    });
+
     it("never lands the keyboard on a disabled row", async () => {
         render(Combobox, { items: instruments, label: "Instrument" });
         await openPanel();
@@ -159,6 +175,15 @@ describe("Combobox", () => {
             expect(active).toBeDefined();
             expect(active).not.toHaveTextContent("Solana");
         }
+    });
+
+    it("draws no focus outline on the search box", async () => {
+        render(Combobox, { items: instruments, label: "Instrument" });
+        await openPanel();
+        await waitFor(() => expect(search()).toHaveFocus());
+
+        const style = getComputedStyle(search());
+        expect(style.outlineStyle === "none" || style.outlineColor === "rgba(0, 0, 0, 0)").toBe(true);
     });
 
     it("does not open when disabled", async () => {

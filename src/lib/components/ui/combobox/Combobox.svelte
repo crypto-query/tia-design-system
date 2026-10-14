@@ -98,7 +98,10 @@
 
     const spec = $derived(sizes[size]);
 
-    const selectedLabel = $derived(items.find((item) => item.value === value)?.label ?? "");
+    const selected = $derived(items.find((item) => item.value === value));
+    const selectedLabel = $derived(selected?.label ?? "");
+    // A disabled choice cannot take the highlight; `""` lets `Command` pick the first enabled row.
+    const highlightOnOpen = $derived(selected && !selected.disabled ? value : "");
 
     // Bucketed by name, not by position: two rows sharing a `group` land under one
     // heading even when a third sits between them.
@@ -220,10 +223,10 @@
             <Popover.Content align="start" class={panelClass} collisionPadding={12} sideOffset={6}>
                 <!-- `label` names the search box: `Command` points the input's `aria-labelledby` at it.
                      `value` is `Command`'s highlighted row, seeded with the choice; it writes back only locally. -->
-                <Command.Root class="flex min-h-0 flex-col" filter={score} label={searchPlaceholder} loop {value}>
+                <Command.Root class="flex min-h-0 flex-col" filter={score} label={searchPlaceholder} loop value={highlightOnOpen}>
                     <div class={cn("flex shrink-0 items-center border-b border-border-muted", spec.search)}>
                         <Search aria-hidden="true" class={cn("shrink-0 text-foreground-subtle", spec.searchIcon)} />
-                        <!-- Keeps the base layer's outline: focus lands here when the panel opens. -->
+                        <!-- No focus outline: focus lands here as the panel opens, so the open panel and the caret mark it. -->
                         <Command.Input
                             class={cn(
                                 "min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground placeholder:text-foreground-subtle focus:ring-0",
