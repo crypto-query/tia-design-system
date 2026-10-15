@@ -147,6 +147,17 @@
         onOpenChange?.(true);
     }
 
+    // `Command` scrolls the highlighted row in with `scrollIntoView` before floating-ui places the panel,
+    // which scrolls the page too; this scrolls only the list.
+    function revealHighlight(viewport: HTMLElement) {
+        const frame = requestAnimationFrame(() => {
+            const row = viewport.querySelector("[data-selected]");
+            const below = row ? row.getBoundingClientRect().bottom - viewport.getBoundingClientRect().bottom : 0;
+            if (below > 0) viewport.scrollTop += below;
+        });
+        return () => cancelAnimationFrame(frame);
+    }
+
     // The side the panel actually opened on, after a flip; bits-ui only writes it to the panel.
     let side = $state("bottom");
 
@@ -241,7 +252,13 @@
             <Popover.Content {@attach trackSide} align="start" class={panelClass} collisionPadding={{ top: 12, bottom: 12 }}>
                 <!-- `label` names the search box: `Command` points the input's `aria-labelledby` at it.
                      `value` is `Command`'s highlighted row, seeded with the choice; it writes back only locally. -->
-                <Command.Root class="flex min-h-0 flex-col" filter={score} label={searchPlaceholder} loop value={highlightOnOpen}>
+                <Command.Root
+                    class="flex min-h-0 flex-col"
+                    filter={score}
+                    label={searchPlaceholder}
+                    loop
+                    value={highlightOnOpen}
+                    disableInitialScroll>
                     <div class={cn("flex shrink-0 items-center border-b border-border-muted", spec.search)}>
                         <Search aria-hidden="true" class={cn("shrink-0 text-foreground-subtle", spec.searchIcon)} />
                         <!-- No focus outline: focus lands here as the panel opens, so the open panel and the caret mark it. -->
@@ -253,7 +270,7 @@
                             placeholder={searchPlaceholder} />
                     </div>
                     <Command.List class="min-h-0 flex-1 overflow-hidden" id={listId} aria-label={label}>
-                        <Command.Viewport class="max-h-72 overflow-y-auto p-1.25">
+                        <Command.Viewport {@attach revealHighlight} class="max-h-72 overflow-y-auto p-1.25">
                             <!-- Announced: a panel that shrinks to nothing reads as the list being gone. -->
                             <Command.Empty class="px-3 py-5.5 text-center text-sm/normal text-foreground-subtle" role="status">
                                 {emptyMessage}

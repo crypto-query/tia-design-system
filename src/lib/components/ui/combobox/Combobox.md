@@ -66,6 +66,16 @@ edges can differ by under half a device pixel.
 The trigger's focus ring needs no open-state rule: while open, focus is trapped
 in the search box, so the ring never meets the panel.
 
+## Opening keeps the page still
+
+On open, `Command` brings the highlighted row into view with `scrollIntoView`.
+That scrolls every scrolling ancestor, the page too. On a slow page it runs
+before floating-ui places the panel, while the panel still sits above the page
+(`translate(0, -200%)`). The page then scrolls to its top. So `Command.Root`
+gets `disableInitialScroll`, and `revealHighlight` scrolls only the list, one
+frame after mount. The unit test spies on `scrollIntoView`: the race needs a
+slower page than the test page to show.
+
 ## Accessibility
 
 | Decision                                        | Why                                                                                                                                                   |

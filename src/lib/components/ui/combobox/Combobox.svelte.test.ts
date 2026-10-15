@@ -42,6 +42,9 @@ function radii(element: HTMLElement, side: "top" | "bottom"): number[] {
         : [parseFloat(style.borderBottomLeftRadius), parseFloat(style.borderBottomRightRadius)];
 }
 
+const many = (count: number): ComboboxItem[] =>
+    Array.from({ length: count }, (_, index) => ({ value: `i${index}`, label: `Item ${index}`, group: index < count / 2 ? "One" : "Two" }));
+
 async function openPanel() {
     await userEvent.click(trigger());
     await screen.findByRole("listbox");
@@ -290,6 +293,32 @@ describe("Combobox", () => {
         expect(radii(panelElement(), "bottom")).toEqual([0, 0]);
         expect(getComputedStyle(panelElement()).borderBottomWidth).toBe("0px");
         expect(Math.abs(panelBox().bottom - trigger().getBoundingClientRect().top)).toBeLessThanOrEqual(0.5);
+    });
+
+    // `scrollIntoView` scrolls the page too, and on open the panel may not be placed yet: it then sits above
+    // the page, which scrolls to its top. A spy, as the race needs a slower page than this one to show.
+    it("opens without calling scrollIntoView", async () => {
+        const scrolls = vi.spyOn(Element.prototype, "scrollIntoView");
+        onTestFinished(() => scrolls.mockRestore());
+
+        render(Combobox, { items: many(30), label: "Instrument", value: "i29" });
+        await openPanel();
+        await waitFor(() => expect(screen.getByRole("option", { name: "Item 29" })).toHaveAttribute("data-selected"));
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        expect(scrolls).not.toHaveBeenCalled();
+    });
+
+    it("scrolls the list to a chosen row below its fold", async () => {
+        render(Combobox, { items: many(30), label: "Instrument", value: "i29" });
+        await openPanel();
+
+        const row = screen.getByRole("option", { name: "Item 29" });
+        const list = row.closest<HTMLElement>("[data-command-viewport]");
+        await waitFor(() => {
+            expect(list?.scrollTop).toBeGreaterThan(0);
+            expect(row.getBoundingClientRect().bottom).toBeLessThanOrEqual(list?.getBoundingClientRect().bottom ?? 0);
+        });
     });
 
     it.each([
