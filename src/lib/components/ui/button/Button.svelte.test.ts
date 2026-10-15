@@ -249,4 +249,78 @@ describe("Button", () => {
             document.documentElement.classList.remove("dark");
         }
     });
+    describe("outline-fill", () => {
+        /** Reads a token's colour off a probe element, so the assertions follow the theme. */
+        const token = (className: string, property: "color" | "backgroundColor" | "borderTopColor") => {
+            const probe = document.createElement("span");
+            probe.className = className;
+            document.body.append(probe);
+            const value = getComputedStyle(probe)[property];
+            probe.remove();
+            return value;
+        };
+
+        it.each(["light", "dark"] as const)("draws a primary edge and ink on the surface at rest on the %s canvas", (theme) => {
+            document.documentElement.classList.toggle("dark", theme === "dark");
+
+            try {
+                render(Button, { children: label("Account"), variant: "outline-fill", class: "transition-none" });
+                const style = getComputedStyle(screen.getByRole("button", { name: "Account" }));
+
+                expect([style.borderTopColor, style.color, style.backgroundColor]).toEqual([
+                    token("text-primary", "color"),
+                    token("text-primary", "color"),
+                    token("bg-surface", "backgroundColor")
+                ]);
+            } finally {
+                document.documentElement.classList.remove("dark");
+            }
+        });
+
+        it("fills with primary on hover and does not lift or cast a shadow", async () => {
+            render(Button, { children: label("Account"), variant: "outline-fill", class: "transition-none" });
+            const button = screen.getByRole("button", { name: "Account" });
+
+            await userEvent.hover(button);
+            const style = getComputedStyle(button);
+
+            expect([style.backgroundColor, style.color, style.translate, style.boxShadow]).toEqual([
+                token("bg-primary", "backgroundColor"),
+                token("text-primary-foreground", "color"),
+                "none",
+                "none"
+            ]);
+        });
+
+        // Proves the hover above could have seen a lift, so its `none` is not vacuous.
+        it("leaves the lift on the default variant", async () => {
+            render(Button, { children: label("Save"), class: "transition-none" });
+            const button = screen.getByRole("button", { name: "Save" });
+
+            await userEvent.hover(button);
+
+            expect(getComputedStyle(button).translate).not.toBe("none");
+        });
+
+        it.each([
+            { state: "disabled", props: { disabled: true }, role: "button" },
+            { state: "aria-disabled", props: { disabled: true, href: "/account" }, role: "link" }
+        ] as const)("greys its edge and ink and fades less when $state", ({ props, role }) => {
+            render(Button, { children: label("Account"), variant: "outline-fill", class: "transition-none", ...props });
+            const style = getComputedStyle(screen.getByRole(role, { name: "Account" }));
+
+            expect([style.borderTopColor, style.color, style.opacity, style.pointerEvents]).toEqual([
+                token("border border-border-input", "borderTopColor"),
+                token("text-foreground-subtle", "color"),
+                "0.7",
+                "none"
+            ]);
+        });
+
+        it("keeps the half fade on the other variants", () => {
+            render(Button, { children: label("Save"), variant: "outline", class: "transition-none", disabled: true });
+
+            expect(getComputedStyle(screen.getByRole("button", { name: "Save" })).opacity).toBe("0.5");
+        });
+    });
 });

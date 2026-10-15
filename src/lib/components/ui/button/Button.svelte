@@ -3,7 +3,7 @@
     import type { Snippet } from "svelte";
     import { cn } from "../../../utils/cn";
 
-    type Variant = "default" | "accent" | "destructive" | "outline" | "ghost" | "success" | "link";
+    type Variant = "default" | "accent" | "destructive" | "outline" | "outline-fill" | "ghost" | "success" | "link";
     type Size = "sm" | "md" | "lg" | "xl" | "icon";
 
     type Props = ButtonPrimitive.RootProps & {
@@ -38,6 +38,8 @@
             "bg-destructive text-destructive-foreground shadow-btn-destructive hover:bg-destructive-hover hover:shadow-btn-destructive-hover active:bg-destructive-hover active:shadow-btn-destructive",
         outline:
             "border-border-input bg-surface text-foreground hover:border-primary hover:text-primary hover:shadow-subtle active:border-primary active:bg-accent active:text-primary active:shadow-none",
+        "outline-fill":
+            "border-primary bg-surface text-primary hover:bg-primary hover:text-primary-foreground active:border-primary-hover active:bg-primary-hover active:text-primary-foreground disabled:border-border-input disabled:text-foreground-subtle disabled:opacity-70 aria-disabled:border-border-input aria-disabled:text-foreground-subtle aria-disabled:opacity-70",
         ghost: "text-foreground-muted hover:bg-accent hover:text-foreground active:bg-active-overlay active:text-foreground",
         success: "border-success/35 bg-success-light text-success-strong hover:border-success active:border-success",
         link: "text-primary underline-offset-4 hover:underline active:text-primary-hover active:underline"
@@ -55,7 +57,7 @@
     const liftStyles = "motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-98";
 
     const isLink = $derived(variant === "link");
-    const lifts = $derived(!isLink && variant !== "ghost" && variant !== "success");
+    const lifts = $derived(!isLink && variant !== "ghost" && variant !== "success" && variant !== "outline-fill");
 
     const classes = $derived(
         cn(baseStyles, variantStyles[variant], sizeStyles[size], isLink && linkStyles, lifts && liftStyles, className)

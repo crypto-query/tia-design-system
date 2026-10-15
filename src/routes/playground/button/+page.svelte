@@ -2,7 +2,7 @@
     import { ArrowRight, Download, Plus } from "lucide-svelte";
     import Button from "$lib/components/ui/button/Button.svelte";
 
-    const variants = ["default", "accent", "destructive", "outline", "ghost", "success", "link"] as const;
+    const variants = ["default", "accent", "destructive", "outline", "outline-fill", "ghost", "success", "link"] as const;
     const sizes = ["sm", "md", "lg", "xl"] as const;
 </script>
 
@@ -107,6 +107,7 @@
             <Button href="/playground">Anchor</Button>
             <Button variant="link" href="/playground" trailingIcon={trailing}>Inline text link</Button>
             <Button href="/playground" disabled>Disabled anchor</Button>
+            <Button variant="outline-fill" href="/playground" disabled>Disabled outline-fill anchor</Button>
         </div>
         <p class="text-sm text-foreground-muted">
             Body copy with an <Button variant="link" href="/playground">inline link</Button> in it, to check the link variant sits on the text
