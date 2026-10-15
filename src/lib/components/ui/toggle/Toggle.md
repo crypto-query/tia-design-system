@@ -219,11 +219,15 @@ does — the reference's own `onKeyDown` ends in `next.focus()` and never toggle
 The issue also says, in the same breath, not to add key handlers. Left as the
 primitive and the reference agree; `ToggleGroup.svelte.test.ts` pins it.
 
-One smaller difference in the same area: the reference puts the group's tab stop
-on the **pressed** button, so tabbing into a segmented control lands on the
-current mode. bits-ui puts it on the **first** button until something in the group
-has been focused. Closing that would mean driving the roving tab stop by hand,
-which is the key handling the issue ruled out.
+The tab stop of a `single` group is the **pressed** button, as in the reference and
+the WAI-ARIA radio group: Tab into a segmented control lands on the current mode.
+With nothing pressed, or the pressed button disabled, it is the first enabled
+button. After that it follows the button focused last, and a new value from the
+parent moves it to the new pressed button. bits-ui alone puts the stop on the
+**first** button until something is focused, and gives no way to set it. So
+`ToggleGroup` holds the stop and hands it down through the group context, and
+`Toggle` writes `tabindex` after the primitive's own. The arrow keys stay
+bits-ui's; `multiple` keeps bits-ui's tab stop unchanged.
 
 ## `label` is optional in the type and not in practice
 

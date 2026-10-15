@@ -60,8 +60,38 @@
         fullWidth,
         vertical,
         sliding,
-        indicatorReady: capsule.ready
+        indicatorReady: capsule.ready,
+        tabStop
     }));
+
+    // bits-ui puts the roving tab stop on the first item until something is focused, and
+    // gives no way to set it, so a single group owns the stop and hands it down by value.
+    let tabStop = $state<string | null>(null);
+    let trackElement = $state<HTMLElement>();
+
+    // An effect, not the attachment: the items' attributes are not written yet when that runs.
+    // shortcut: the pressed item's disabled state and presence are read only when the value
+    // changes; re-check on mutation if items start toggling either.
+    $effect(() => {
+        const pressed = asSingle;
+        if (
+            pressed !== "" &&
+            trackElement?.querySelector(`[data-toggle-group-item][data-value="${CSS.escape(pressed)}"]:not([data-disabled])`)
+        ) {
+            tabStop = pressed;
+        }
+    });
+
+    function trackTabStop(track: HTMLElement) {
+        trackElement = track;
+        const follow = (event: FocusEvent) => {
+            const item = event.target instanceof Element ? event.target.closest("[data-toggle-group-item]") : null;
+            const focused = item?.getAttribute("data-value");
+            if (focused) tabStop = focused;
+        };
+        track.addEventListener("focusin", follow);
+        return () => track.removeEventListener("focusin", follow);
+    }
 
     let capsule = $state({ x: 0, y: 0, width: 0, height: 0, radius: "0px", ready: false, disabled: false });
 
@@ -160,7 +190,13 @@
     a set of `role="radio"` buttons with no `radiogroup` to own them.
 -->
 {#snippet track({ props }: { props: Record<string, unknown> })}
-    <div {...elementProps} {...props} role={type === "single" ? "radiogroup" : "group"} class={classes} {@attach sliding && measureTrack}>
+    <div
+        {...elementProps}
+        {...props}
+        role={type === "single" ? "radiogroup" : "group"}
+        class={classes}
+        {@attach sliding && measureTrack}
+        {@attach type === "single" && trackTabStop}>
         {#if sliding}
             <span
                 aria-hidden="true"

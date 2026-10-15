@@ -313,6 +313,64 @@ describe("ToggleGroup", () => {
         });
     });
 
+    describe("the tab stop under single", () => {
+        const radios = () => BUTTONS.map((name) => screen.getByRole("radio", { name }));
+        const tabStops = () => radios().filter((radio) => radio.tabIndex === 0);
+        const enterFromBefore = async () => {
+            screen.getByRole("button", { name: "Before" }).focus();
+            await userEvent.tab();
+        };
+
+        it("is the pressed item, so Tab lands on the current choice", async () => {
+            render(Harness, { type: "single", label: "Layout", value: "italic", fenced: true });
+
+            await enterFromBefore();
+            expect(screen.getByRole("radio", { name: "Italic" })).toHaveFocus();
+            expect(tabStops()).toEqual([screen.getByRole("radio", { name: "Italic" })]);
+        });
+
+        it("is the first item when nothing is pressed", async () => {
+            render(Harness, { type: "single", label: "Layout", value: null, fenced: true });
+
+            await enterFromBefore();
+            expect(screen.getByRole("radio", { name: "Bold" })).toHaveFocus();
+            expect(tabStops()).toHaveLength(1);
+        });
+
+        it("follows the item focused last, so leaving and coming back returns to it", async () => {
+            render(Harness, { type: "single", label: "Layout", value: "bold", fenced: true });
+
+            await enterFromBefore();
+            await userEvent.keyboard("{ArrowRight}");
+            const italic = screen.getByRole("radio", { name: "Italic" });
+            expect(italic).toHaveFocus();
+
+            await userEvent.tab();
+            expect(screen.getByRole("button", { name: "After" })).toHaveFocus();
+            await userEvent.tab({ shift: true });
+            expect(italic).toHaveFocus();
+            expect(tabStops()).toEqual([italic]);
+        });
+
+        it("leaves the group in one Shift+Tab from the pressed item", async () => {
+            render(Harness, { type: "single", label: "Layout", value: "underline", fenced: true });
+
+            await enterFromBefore();
+            expect(screen.getByRole("radio", { name: "Underline" })).toHaveFocus();
+            await userEvent.tab({ shift: true });
+            expect(screen.getByRole("button", { name: "Before" })).toHaveFocus();
+        });
+
+        it("moves to the new pressed item when the parent changes the value", async () => {
+            const view = render(Harness, { type: "single", label: "Layout", value: "bold", fenced: true });
+
+            await view.rerender({ value: "underline" });
+            await waitFor(() => expect(tabStops()).toEqual([screen.getByRole("radio", { name: "Underline" })]));
+            await enterFromBefore();
+            expect(screen.getByRole("radio", { name: "Underline" })).toHaveFocus();
+        });
+    });
+
     describe("what assistive technology is told", () => {
         it("takes its accessible name from label", () => {
             render(Harness, { type: "multiple", label: "Formatting" });

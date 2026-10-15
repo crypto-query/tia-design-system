@@ -23,6 +23,8 @@
         /** The single-select group paints the selected surface below its items. */
         sliding?: boolean;
         indicatorReady?: boolean;
+        /** The item value holding the single group's tab stop; `null` leaves it to bits-ui. */
+        tabStop?: string | null;
     };
 
     const contextKey = Symbol("tia-toggle-group");
@@ -84,6 +86,7 @@
     const groupItemValue = $derived(inherited === undefined ? undefined : value);
 
     const iconOnly = $derived(children === undefined);
+    const tabStop = $derived(inherited?.tabStop ?? null);
 
     // The group's geometry reaching into the button. `min-w-0` lets a wide label shrink to
     // its equal share, and sits before the size map so an icon-only square keeps its own.
@@ -147,7 +150,12 @@
 
 {#if groupItemValue !== undefined}
     <ToggleGroupPrimitive.Item value={groupItemValue} class={classes} disabled={resolvedDisabled} {...restProps}>
-        {@render body()}
+        {#snippet child({ props })}
+            <!-- `Item` merges its own `tabindex` last, so the group's stop is written after the spread. -->
+            <button {...props} {...tabStop === null ? {} : { tabindex: tabStop === groupItemValue ? 0 : -1 }}>
+                {@render body()}
+            </button>
+        {/snippet}
     </ToggleGroupPrimitive.Item>
 {:else}
     <TogglePrimitive.Root class={classes} disabled={resolvedDisabled} {onPressedChange} bind:pressed {...restProps}>

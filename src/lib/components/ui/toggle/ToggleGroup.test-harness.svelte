@@ -12,11 +12,13 @@
         value?: string[] | string | null;
         firstItem?: Pick<ComponentProps<typeof Toggle>, "variant" | "size" | "disabled" | "class">;
         showLast?: boolean;
+        /** Focusable buttons before and after the group, so a Tab enters and leaves it from a known place. */
+        fenced?: boolean;
         /** Widened over both branches; each accepts it, since a callback may take more. */
         onValueChange?: (value: string[] | string | null) => void;
     };
 
-    let { value = $bindable(), type = "multiple", firstItem, showLast = true, ...restProps }: Props = $props();
+    let { value = $bindable(), type = "multiple", firstItem, showLast = true, fenced = false, ...restProps }: Props = $props();
 
     const asMultiple = $derived(Array.isArray(value) ? value : []);
     const asSingle = $derived(typeof value === "string" ? value : null);
@@ -29,6 +31,7 @@
     {#if showLast}<Toggle value="underline">Underline</Toggle>{/if}
 {/snippet}
 
+{#if fenced}<button type="button">Before</button>{/if}
 {#if type === "single"}
     <ToggleGroup {...restProps} type="single" bind:value={() => asSingle, (next) => (value = next)}>
         {@render items()}
@@ -38,4 +41,5 @@
         {@render items()}
     </ToggleGroup>
 {/if}
+{#if fenced}<button type="button">After</button>{/if}
 <p data-testid="bound">{printed}</p>
