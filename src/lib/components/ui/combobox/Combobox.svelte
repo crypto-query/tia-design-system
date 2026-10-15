@@ -147,6 +147,17 @@
         onOpenChange?.(true);
     }
 
+    // The side the panel actually opened on, after a flip; bits-ui only writes it to the panel.
+    let side = $state("bottom");
+
+    function trackSide(panel: HTMLElement) {
+        const read = () => (side = panel.dataset.side ?? "bottom");
+        const observer = new MutationObserver(read);
+        observer.observe(panel, { attributeFilter: ["data-side"] });
+        read();
+        return () => observer.disconnect();
+    }
+
     const fieldClass = $derived(
         cn(
             "rounded-md border bg-background-alt text-foreground transition-colors duration-150 ease-out-soft",
@@ -159,7 +170,9 @@
             // `--border-input-hover`, not `--border-emphasis`: on the navy canvas emphasis is
             // fainter than the resting input border, so hovering would fade the field.
             "border-border-input hover:border-border-input-hover focus-visible:border-border-focus focus-visible:outline-border-focus",
-            open && "border-border-focus",
+            // Open, the trigger and panel draw one shape: square on the joined side, one border colour.
+            open && "border-border-focus hover:border-border-focus",
+            open && (side === "top" ? "rounded-t-none" : "rounded-b-none"),
             className
         )
     );
@@ -170,9 +183,12 @@
 
     // `max-w-*` caps the panel at the room floating-ui reports, so a trigger wider than
     // the viewport's free span cannot push the panel off screen. `z-50` is enough: the
-    // panel is portalled to the end of its target.
-    const panelClass =
-        "z-50 flex w-(--bits-popover-anchor-width) max-w-(--bits-popover-content-available-width) max-h-(--bits-popover-content-available-height) flex-col overflow-hidden rounded-lg border border-border-muted bg-surface shadow-medium outline-hidden";
+    // panel is portalled to the end of its target. On the joined side the trigger's border
+    // is the only line, so the panel drops its own there.
+    const panelClass = cn(
+        "z-50 flex w-(--bits-popover-anchor-width) max-w-(--bits-popover-content-available-width) max-h-(--bits-popover-content-available-height) flex-col overflow-hidden rounded-md border border-border-focus bg-surface shadow-medium outline-hidden",
+        "data-[side=bottom]:rounded-t-none data-[side=bottom]:border-t-0 data-[side=top]:rounded-b-none data-[side=top]:border-b-0"
+    );
 
     // `data-selected` is the highlighted row in `Command`, not the chosen one; the check marks that.
     // `accent-foreground`: `primary` text on the dark `accent` fill reads under 3:1.
@@ -220,7 +236,9 @@
             {/snippet}
         </Popover.Trigger>
         <Popover.Portal to={portalTarget}>
-            <Popover.Content align="start" class={panelClass} collisionPadding={12} sideOffset={6}>
+            <!-- No side padding: with the panel as wide as the trigger, a 12px padding only shifted
+                 it off the trigger whenever the trigger sat within 12px of the viewport edge. -->
+            <Popover.Content {@attach trackSide} align="start" class={panelClass} collisionPadding={{ top: 12, bottom: 12 }}>
                 <!-- `label` names the search box: `Command` points the input's `aria-labelledby` at it.
                      `value` is `Command`'s highlighted row, seeded with the choice; it writes back only locally. -->
                 <Command.Root class="flex min-h-0 flex-col" filter={score} label={searchPlaceholder} loop value={highlightOnOpen}>

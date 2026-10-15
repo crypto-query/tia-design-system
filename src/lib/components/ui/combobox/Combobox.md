@@ -47,13 +47,24 @@ order. `Command` hides a group the query has emptied, heading and all.
 row's `label`. `Command` wants a score, so the filter returns 1 or 0: a graded
 score would let `Command` re-sort the rows under the cursor.
 
-## The panel is capped at the free width
+## The panel attaches to the trigger
+
+Open, trigger and panel draw one shape: no gap, square corners on the joined
+side, and one `border-focus` border. The panel drops its border on the joined
+side, so the trigger's border is the only line there. The panel opens below and
+flips above when there is no room; `trackSide` watches the panel's `data-side`
+so the trigger squares the matching corners.
 
 The panel takes the trigger's width (`--bits-popover-anchor-width`) but never
-more than floating-ui's available width (`--bits-popover-content-available-width`).
-Without the cap, a full-width trigger on a 390px viewport pushed the panel past
-the right edge once the 12px collision padding shifted it, and the page scrolled
-sideways. The Select carries the same cap.
+more than floating-ui's available width (`--bits-popover-content-available-width`),
+so a trigger wider than the viewport cannot push it off screen. The 12px collision
+padding is on top and bottom only: on the sides it shifted the panel up to 12px
+off the trigger whenever the trigger sat that close to the viewport edge. bits-ui
+rounds the panel's position to device pixels, so on a fractional trigger the
+edges can differ by under half a device pixel.
+
+The trigger's focus ring needs no open-state rule: while open, focus is trapped
+in the search box, so the ring never meets the panel.
 
 ## Accessibility
 
@@ -76,6 +87,6 @@ sideways. The Select carries the same cap.
 | `children` form with `ComboboxItem`, `ComboboxGroup` and a context    | data form only, one file                                                         | the context existed only for the children form; one export entry   |
 | `description`, `meta`, `icon`, `keywords` on a row; `filter` override | none                                                                             | no caller needs them yet; the filter reads `label` only            |
 | `error`, `errorMessage`, `helperText`                                 | none                                                                             | not needed yet, as in the Select                                   |
-| `width`, `menuWidth`, `maxMenuHeight`, `side`, `align`, `offset`      | trigger width from `class`, panel capped as above, `max-h-72`, below, start, 6px | no caller needs them yet                                           |
+| `width`, `menuWidth`, `maxMenuHeight`, `side`, `align`, `offset`      | trigger width from `class`, panel capped as above, `max-h-72`, below, start, 0px | no caller needs them yet                                           |
 | `value: string \| number \| null`                                     | `value: string`, `""` for nothing                                                | the Select's type                                                  |
 | highlighted row in `primary` text                                     | `accent-foreground` text and check                                               | `primary` reads at 2.9:1 on the dark accent fill; the Select's fix |

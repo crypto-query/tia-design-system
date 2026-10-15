@@ -25,6 +25,23 @@ function search(): HTMLElement {
     return screen.getByRole("combobox", { name: "Search…" });
 }
 
+function panelElement(): HTMLElement {
+    const panel = screen.getByRole("listbox").closest<HTMLElement>("[data-popover-content]");
+    if (!panel) throw new Error("no open panel");
+    return panel;
+}
+
+function panelBox(): DOMRect {
+    return panelElement().getBoundingClientRect();
+}
+
+function radii(element: HTMLElement, side: "top" | "bottom"): number[] {
+    const style = getComputedStyle(element);
+    return side === "top"
+        ? [parseFloat(style.borderTopLeftRadius), parseFloat(style.borderTopRightRadius)]
+        : [parseFloat(style.borderBottomLeftRadius), parseFloat(style.borderBottomRightRadius)];
+}
+
 async function openPanel() {
     await userEvent.click(trigger());
     await screen.findByRole("listbox");
@@ -223,6 +240,56 @@ describe("Combobox", () => {
             expect(box?.left).toBeGreaterThanOrEqual(0);
             expect(box?.right).toBeLessThanOrEqual(390);
         });
+    });
+
+    it("attaches the panel under the trigger, edge to edge, even with the trigger at the viewport's left edge", async () => {
+        render(Combobox, { items: instruments, label: "Instrument" });
+        await openPanel();
+
+        const box = trigger().getBoundingClientRect();
+        expect(box.left).toBe(0);
+        await waitFor(() => {
+            const panel = panelBox();
+            expect(Math.abs(panel.left - box.left)).toBeLessThanOrEqual(0.5);
+            expect(Math.abs(panel.right - box.right)).toBeLessThanOrEqual(0.5);
+            expect(Math.abs(panel.top - box.bottom)).toBeLessThanOrEqual(0.5);
+        });
+    });
+
+    it("squares the corners where trigger and panel meet, and rounds them again on close", async () => {
+        render(Combobox, { items: instruments, label: "Instrument" });
+        await openPanel();
+
+        const panel = getComputedStyle(panelElement());
+        await waitFor(() => expect(radii(trigger(), "bottom")).toEqual([0, 0]));
+        expect(radii(trigger(), "top")).not.toContain(0);
+        expect(radii(panelElement(), "top")).toEqual([0, 0]);
+        expect(radii(panelElement(), "bottom")).not.toContain(0);
+        // The trigger's bottom border is the only line at the join.
+        expect(panel.borderTopWidth).toBe("0px");
+
+        await userEvent.keyboard("{Escape}");
+        await waitFor(() => expect(screen.queryByRole("listbox")).toBeNull());
+        expect(radii(trigger(), "bottom")).not.toContain(0);
+    });
+
+    it("follows the panel above the trigger when there is no room below", async () => {
+        await page.viewport(1280, 300);
+        onTestFinished(() => page.viewport(1280, 720));
+        const spacer = document.createElement("div");
+        spacer.style.height = "220px";
+        document.body.prepend(spacer);
+        onTestFinished(() => spacer.remove());
+
+        render(Combobox, { items: instruments, label: "Instrument" });
+        await openPanel();
+
+        await waitFor(() => expect(panelElement()).toHaveAttribute("data-side", "top"));
+        await waitFor(() => expect(radii(trigger(), "top")).toEqual([0, 0]));
+        expect(radii(trigger(), "bottom")).not.toContain(0);
+        expect(radii(panelElement(), "bottom")).toEqual([0, 0]);
+        expect(getComputedStyle(panelElement()).borderBottomWidth).toBe("0px");
+        expect(Math.abs(panelBox().bottom - trigger().getBoundingClientRect().top)).toBeLessThanOrEqual(0.5);
     });
 
     it.each([
