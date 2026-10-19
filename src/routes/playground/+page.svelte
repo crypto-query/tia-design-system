@@ -10,6 +10,7 @@
         "radio-group",
         "toggle",
         "tooltip",
+        "popover",
         "select",
         "combobox",
         "table",

@@ -17,6 +17,7 @@
         "./ui/toggle/Toggle.svelte": "./src/lib/components/ui/toggle/Toggle.svelte",
         "./ui/toggle/ToggleGroup.svelte": "./src/lib/components/ui/toggle/ToggleGroup.svelte",
         "./ui/tooltip/Tooltip.svelte": "./src/lib/components/ui/tooltip/Tooltip.svelte",
+        "./ui/popover/Popover.svelte": "./src/lib/components/ui/popover/Popover.svelte",
         "./ui/select/Select.svelte": "./src/lib/components/ui/select/Select.svelte",
         "./ui/combobox/Combobox.svelte": "./src/lib/components/ui/combobox/Combobox.svelte",
         "./ui/table/Table.svelte": "./src/lib/components/ui/table/Table.svelte",
