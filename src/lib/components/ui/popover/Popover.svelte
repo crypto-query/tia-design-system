@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { Popover as PopoverPrimitive, type PortalProps } from "bits-ui";
+    import { type BitsPrimitiveDivAttributes, Popover as PopoverPrimitive, type PortalProps } from "bits-ui";
     import { X } from "lucide-svelte";
     import { onMount, type Snippet } from "svelte";
     import Button from "../button/Button.svelte";
     import { cn } from "../../../utils/cn";
 
-    type Props = {
+    // The primitive's div attributes, as Tooltip takes them; `title` is ours, a heading rather than a hover hint.
+    type Props = Omit<BitsPrimitiveDivAttributes, "dir" | "children" | "title"> & {
         /**
          * The control that opens the panel. It receives the primitive's props — the click and
          * key handlers, `aria-expanded`, `aria-controls` and the ref — to spread onto its own element.
@@ -15,6 +16,8 @@
         children: Snippet;
         /** Heading drawn at the top of the panel; it also names the dialog. */
         title: string;
+        /** Controls drawn right of the title, before the sheet's close button. */
+        actions?: Snippet;
         open?: boolean;
         onOpenChange?: (open: boolean) => void;
         /** Draw the panel as a bottom sheet with a close button, for a narrow container. @default false */
@@ -34,6 +37,7 @@
         trigger,
         children,
         title,
+        actions,
         open = $bindable(false),
         onOpenChange,
         sheet = false,
@@ -41,7 +45,8 @@
         align = "start",
         offset = 8,
         portalTarget,
-        class: className
+        class: className,
+        ...restProps
     }: Props = $props();
 
     const uid = $props.id();
@@ -85,14 +90,19 @@
 {#snippet body()}
     <div class={cn("flex items-center gap-2", sheet && "-mr-2.5")}>
         <h3 id={titleId} class={cn("font-semibold text-popover-foreground", sheet ? "text-xl" : "text-lg")}>{title}</h3>
-        {#if sheet}
-            <PopoverPrimitive.Close>
-                {#snippet child({ props })}
-                    <Button {...props} aria-label="Close" class="ml-auto size-11 text-popover-foreground" size="icon" variant="ghost">
-                        <X class="size-5" />
-                    </Button>
-                {/snippet}
-            </PopoverPrimitive.Close>
+        {#if actions || sheet}
+            <div class="ml-auto flex shrink-0 items-center gap-2">
+                {@render actions?.()}
+                {#if sheet}
+                    <PopoverPrimitive.Close>
+                        {#snippet child({ props })}
+                            <Button {...props} aria-label="Close" class="size-11 text-popover-foreground" size="icon" variant="ghost">
+                                <X class="size-5" />
+                            </Button>
+                        {/snippet}
+                    </PopoverPrimitive.Close>
+                {/if}
+            </div>
         {/if}
     </div>
     {@render children()}
@@ -109,8 +119,10 @@
                 ? "fixed inset-0 z-50 bg-scrim animate-in fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:fill-mode-forwards motion-reduce:animate-none"
                 : "hidden"} />
         <!-- Focus is trapped only in the sheet, which covers the page. The popover is non-modal:
-             Tab or a click may leave it, and leaving closes it. -->
+             Tab or a click may leave it, and leaving closes it. The rest props reach the panel through the
+             primitive's props, which chains their handlers with its own. -->
         <PopoverPrimitive.Content
+            {...restProps}
             {align}
             aria-labelledby={titleId}
             collisionPadding={8}

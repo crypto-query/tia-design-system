@@ -1,4 +1,5 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/svelte";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/svelte";
+import { createRawSnippet } from "svelte";
 import { userEvent } from "@vitest/browser/context";
 import { afterEach, describe, expect, it, onTestFinished } from "vitest";
 import Harness from "./Popover.test-harness.svelte";
@@ -49,6 +50,21 @@ describe("Popover", () => {
             await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
             await waitFor(() => expect(triggerEl()).toHaveFocus());
             expect(screen.getByTestId("open")).toHaveTextContent("false");
+        });
+
+        it("draws the actions right of the title, centred on it, and passes native attributes to the panel", async () => {
+            const actions = createRawSnippet(() => ({ render: () => `<button type="button">Include all</button>` }));
+            render(Harness, { title: TITLE, sheet, open: true, actions, "data-testid": "years-panel" });
+
+            const dialog = await screen.findByRole("dialog", { name: TITLE });
+            expect(screen.getByTestId("years-panel")).toBe(dialog);
+            const title = within(dialog).getByRole("heading", { name: TITLE }).getBoundingClientRect();
+            const action = within(dialog).getByRole("button", { name: "Include all" }).getBoundingClientRect();
+            expect(action.left).toBeGreaterThan(title.right);
+            expect(Math.abs(action.top + action.height / 2 - (title.top + title.height / 2))).toBeLessThan(1);
+            if (sheet) {
+                expect(within(dialog).getByRole("button", { name: "Close" }).getBoundingClientRect().left).toBeGreaterThan(action.right);
+            }
         });
     });
 

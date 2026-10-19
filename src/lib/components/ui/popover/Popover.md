@@ -1,9 +1,9 @@
 # Popover — notes
 
 A new component, not a port: the reference never drew one. It came from the
-Predictive Cycles Block, which needs a year popover (a grid of year toggles, two
-action buttons and a note) and a "How to use this chart" panel, both drawn as a
-bottom sheet on a narrow card.
+Predictive Cycles Block, which needs a year popover (a grid of year toggles, an
+"Include all" action in its header and a note) and a "How to use this chart"
+panel, both drawn as a bottom sheet on a narrow card.
 
 The rules that hold for _every_ component live in
 `.agents/skills/tia-design-system/SKILL.md`. Read that first; this file is only
@@ -40,6 +40,7 @@ and the trigger would differ between modes.
 | surface    | `bg-popover-background`, `border-popover-border`, `shadow-medium`, as Tooltip | same                                                                                   |
 | shape      | `rounded-md`, `w-80` (the call site may pass `class="w-85"`)                  | full width, `rounded-t-2xl`, no side or bottom border, `max-h-dvh` with its own scroll |
 | title      | `h3`, `text-lg` semibold                                                      | `text-xl` semibold                                                                     |
+| actions    | the `actions` snippet, right of the title, centred on it                      | same, before the close button                                                          |
 | close      | none — Esc and a click outside are enough                                     | ghost icon `Button`, `size-11` (44px), `aria-label="Close"`                            |
 | decoration | none                                                                          | grab bar (`bg-border`, `h-1 w-10`) and a `bg-scrim` backdrop, both on existing tokens  |
 
@@ -48,6 +49,20 @@ The mockup's values snap to the scale: title 15px is `text-lg`, 17px snaps to
 
 The panel sets no body text size. The content is the call site's, and the year
 grid and the help list want different type.
+
+## `actions` and the rest props
+
+`actions` is a snippet for controls that act on the whole panel, such as
+"Include all". The header row is `flex items-center`, and the actions and the
+sheet's close button share one `ml-auto` group, so the actions sit at the right
+end, before the close button. The call site sizes its own controls: a sheet
+wants 44px targets.
+
+The rest props are the primitive's div attributes, as in `Tooltip`. `title` is
+left out because it is ours, a heading and not a hover hint. They go to
+`Popover.Content`, not straight onto the panel `<div>`, so bits-ui chains any
+handler in them with its own instead of a later spread replacing them. They reach
+the panel in both modes.
 
 ## Focus
 

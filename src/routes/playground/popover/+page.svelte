@@ -27,10 +27,6 @@
         for (const year of YEARS) included[year] = true;
     }
 
-    function onlyRecent() {
-        for (const [index, year] of YEARS.entries()) included[year] = index >= YEARS.length - 5;
-    }
-
     const HELP = [
         { title: "Show or hide a line", text: "Click its chip. Hover a chip to highlight its line." },
         { title: "Move Actual", text: "Drag the Actual line, or focus the chart and use the arrow keys." },
@@ -53,11 +49,11 @@
             </Toggle>
         {/each}
     </div>
-    <div class="flex gap-2 pt-1">
-        <Button onclick={includeAll} size={sheet ? "lg" : "sm"} variant="outline">Include all</Button>
-        <Button onclick={onlyRecent} size={sheet ? "lg" : "sm"} variant="outline">Only recent 5</Button>
-    </div>
     <p class="border-t border-border-muted pt-2 text-2xs text-foreground-subtle">Changes reload the average.</p>
+{/snippet}
+
+{#snippet includeAllAction(sheet: boolean)}
+    <Button aria-disabled={count === YEARS.length} onclick={includeAll} size={sheet ? "lg" : "sm"} variant="outline">Include all</Button>
 {/snippet}
 
 {#snippet help(sheet: boolean)}
@@ -93,8 +89,8 @@
             primitive. Escape and a click outside close it, and focus goes back to the trigger. The panel is a
             <code class="font-mono">dialog</code> named by its <code class="font-mono">title</code>. With
             <code class="font-mono">sheet</code> the same panel draws as a bottom sheet with a close button, for a narrow container — the
-            call site decides when, from its own width. Each page keeps one panel open at a time: <code class="font-mono">open</code> is the call
-            site's.
+            call site decides when, from its own width. An <code class="font-mono">actions</code> snippet draws controls right of the title.
+            Each page keeps one panel open at a time: <code class="font-mono">open</code> is the call site's.
         </p>
     </header>
 
@@ -108,6 +104,9 @@
             <div class="flex items-center gap-2 text-sm font-semibold">
                 Bear
                 <Popover {...bind("years")} title="Bear years">
+                    {#snippet actions()}
+                        {@render includeAllAction(false)}
+                    {/snippet}
                     {#snippet trigger({ props })}
                         {@render badge(props)}
                     {/snippet}
@@ -135,6 +134,9 @@
             <div class="flex items-center gap-2 text-sm font-semibold">
                 Bear
                 <Popover {...bind("years-sheet")} sheet title="Bear years">
+                    {#snippet actions()}
+                        {@render includeAllAction(true)}
+                    {/snippet}
                     {#snippet trigger({ props })}
                         {@render badge(props)}
                     {/snippet}
