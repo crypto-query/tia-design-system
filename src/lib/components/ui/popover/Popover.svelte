@@ -102,10 +102,12 @@
     <PopoverPrimitive.Trigger bind:ref={triggerRef} child={trigger} />
 
     <PopoverPrimitive.Portal to={portalTarget}>
-        {#if sheet}
-            <PopoverPrimitive.Overlay
-                class="fixed inset-0 z-50 bg-scrim animate-in fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:fill-mode-forwards motion-reduce:animate-none" />
-        {/if}
+        <!-- Mounted in both modes: the primitive unmounts the scrim only once it has a node to watch
+             close, so a popover closed without one leaves an invisible scrim when it turns into a sheet. -->
+        <PopoverPrimitive.Overlay
+            class={sheet
+                ? "fixed inset-0 z-50 bg-scrim animate-in fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:fill-mode-forwards motion-reduce:animate-none"
+                : "hidden"} />
         <!-- Focus is trapped only in the sheet, which covers the page. The popover is non-modal:
              Tab or a click may leave it, and leaving closes it. -->
         <PopoverPrimitive.Content

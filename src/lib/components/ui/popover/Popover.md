@@ -64,12 +64,12 @@ Two decisions make this table true:
 
 - **`onCloseAutoFocus` is ours.** bits-ui refocuses the element that held focus
   when the panel opened. After a hand-off between two popovers that is the first
-  popover's trigger, so Esc in the second sent focus to the wrong button. The
-  component now focuses its own trigger, but only when focus is in the panel or
-  on `<body>`. Focus the reader moved on purpose stays where it is.
+  popover's trigger, so Esc in the second would send focus to the wrong button.
+  The component focuses its own trigger instead, but only when focus is in the
+  panel or on `<body>`. Focus the reader moved on purpose stays where it is.
 - **Focus is trapped in the sheet only.** The sheet covers the page with a scrim,
   so it is modal in effect. The popover is not: with the bits-ui default trap a
-  click on a field outside lost its focus back to the trigger. The popover closes
+  click on a field outside would lose its focus back to the trigger. The popover closes
   on focus outside instead, so a Tab out does not leave it open behind.
 
 Tab order is a known cost of a portalled, non-modal panel: the panel sits at the

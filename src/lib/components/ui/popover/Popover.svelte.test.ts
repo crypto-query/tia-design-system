@@ -155,6 +155,19 @@ describe("Popover", () => {
             await waitFor(() => expect(triggerEl()).toHaveFocus());
         });
 
+        it("leaves no scrim behind when a popover closed as a popover becomes a sheet", async () => {
+            const { rerender } = render(Harness, { title: TITLE });
+            await userEvent.click(triggerEl());
+            await screen.findByRole("dialog");
+            await userEvent.keyboard("{Escape}");
+            await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+
+            await rerender({ title: TITLE, sheet: true });
+            await settle();
+
+            expect(document.querySelector("[data-popover-overlay]")).toBeNull();
+        });
+
         it("closes from its close button and returns focus to the trigger", async () => {
             render(Harness, { title: TITLE, sheet: true });
             await userEvent.click(triggerEl());
