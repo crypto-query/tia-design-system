@@ -1,6 +1,6 @@
 import { cleanup, render, screen, waitFor, within } from "@testing-library/svelte";
 import { createRawSnippet } from "svelte";
-import { userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "@vitest/browser/context";
 import { afterEach, describe, expect, it, onTestFinished } from "vitest";
 import Harness from "./Popover.test-harness.svelte";
 import Pair from "./PopoverPair.test-harness.svelte";
@@ -80,6 +80,21 @@ describe("Popover", () => {
         await waitFor(() => expect(triggerEl()).toHaveFocus());
     });
 
+    it("closes on a second click on its trigger", async () => {
+        render(Harness, { title: TITLE });
+        await userEvent.click(triggerEl());
+        // Only with focus in the panel does the press on the trigger move focus outside it.
+        const year = await screen.findByRole("button", { name: "2024" });
+        await waitFor(() => expect(year).toHaveFocus());
+        await settle();
+        // A real press: focus moves on mousedown, and the click follows later.
+        await userEvent.click(triggerEl(), { delay: 100 });
+
+        await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+        expect(screen.getByTestId("open")).toHaveTextContent("false");
+        expect(triggerEl()).toHaveAttribute("aria-expanded", "false");
+    });
+
     it("leaves focus on a control clicked outside", async () => {
         render(Harness, { title: TITLE });
         await userEvent.click(triggerEl());
@@ -134,6 +149,18 @@ describe("Popover", () => {
     });
 
     describe("sheet", () => {
+        it("draws a popover instead on a viewport of 40rem or wider", async () => {
+            const { width, height } = { width: window.innerWidth, height: window.innerHeight };
+            await page.viewport(1024, 768);
+            onTestFinished(() => page.viewport(width, height));
+            render(Harness, { title: TITLE, sheet: true });
+            await userEvent.click(triggerEl());
+
+            const dialog = await screen.findByRole("dialog");
+            expect(within(dialog).queryByRole("button", { name: "Close" })).toBeNull();
+            expect(dialog.getBoundingClientRect().width).toBeLessThan(400);
+        });
+
         it("pins the panel to the bottom of the viewport across its full width", async () => {
             render(Harness, { title: TITLE, sheet: true, open: true });
 

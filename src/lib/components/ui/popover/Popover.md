@@ -15,9 +15,12 @@ upstream workarounds apply here unchanged.
 The popover and the sheet hold the same content and answer to the same trigger.
 Two components would make every call site render the content twice and pick
 one by width. One component keeps the content in one place, and the call site
-passes `sheet` from **its own** container width. The component does not measure
-anything: a Block knows its card width, and a viewport media query would be wrong
-inside a narrow card on a wide screen.
+passes `sheet` from **its own** container width. A viewport media query alone would
+be wrong inside a narrow card on a wide screen.
+
+The component applies `sheet` only below a 40rem viewport. A narrow card on a wide
+screen gets the popover: it fits there, and a sheet across the whole screen looks
+lost under a narrow column.
 
 Both modes use the same bits-ui `Popover.Root` and `Popover.Trigger`, so the
 trigger always carries `aria-haspopup="dialog"`, `aria-expanded` and, while open,
@@ -35,14 +38,14 @@ and the trigger would differ between modes.
 
 ## The look
 
-| Part       | Popover                                                                       | Sheet                                                                                  |
-| ---------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| surface    | `bg-popover-background`, `border-popover-border`, `shadow-medium`, as Tooltip | same                                                                                   |
-| shape      | `rounded-md`, `w-80` (the call site may pass `class="w-85"`)                  | full width, `rounded-t-2xl`, no side or bottom border, `max-h-dvh` with its own scroll |
-| title      | `h3`, `text-lg` semibold                                                      | `text-xl` semibold                                                                     |
-| actions    | the `actions` snippet, right of the title, centred on it                      | same, before the close button                                                          |
-| close      | none — Esc and a click outside are enough                                     | ghost icon `Button`, `size-11` (44px), `aria-label="Close"`                            |
-| decoration | none                                                                          | grab bar (`bg-border`, `h-1 w-10`) and a `bg-scrim` backdrop, both on existing tokens  |
+| Part       | Popover                                                                                                                | Sheet                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| surface    | `bg-popover-background`, `border-popover-border`, `shadow-medium`, as Tooltip                                          | same                                                                                   |
+| shape      | `rounded-md`, `w-80` (the call site may pass `class="w-85"`), at most the height left on its side, with its own scroll | full width, `rounded-t-2xl`, no side or bottom border, `max-h-dvh` with its own scroll |
+| title      | `h3`, `text-lg` semibold                                                                                               | `text-xl` semibold                                                                     |
+| actions    | the `actions` snippet, right of the title, centred on it                                                               | same, before the close button                                                          |
+| close      | none — Esc and a click outside are enough                                                                              | ghost icon `Button`, `size-11` (44px), `aria-label="Close"`                            |
+| decoration | none                                                                                                                   | grab bar (`bg-border`, `h-1 w-10`) and a `bg-scrim` backdrop, both on existing tokens  |
 
 The mockup's values snap to the scale: title 15px is `text-lg`, 17px snaps to
 `text-xl`, and the sheet's 20px corner snaps to `rounded-t-2xl` (24px).
@@ -71,6 +74,7 @@ the panel in both modes.
 | open                                        | the first tabbable in the panel, else the panel itself (bits-ui) |
 | Esc, the close button, a click on the scrim | the trigger                                                      |
 | a click outside on plain page               | the trigger                                                      |
+| a second press on the trigger               | stays on the trigger; the panel closes                           |
 | a click outside on another control          | stays on that control                                            |
 | Tab out of a popover                        | where Tab put it; the popover closes                             |
 | one popover hands off to another            | the second one; on its close, **its own** trigger                |
@@ -82,6 +86,10 @@ Two decisions make this table true:
   popover's trigger, so Esc in the second would send focus to the wrong button.
   The component focuses its own trigger instead, but only when focus is in the
   panel or on `<body>`. Focus the reader moved on purpose stays where it is.
+- **Focus on the trigger is not "outside".** A press on the trigger moves focus
+  there on mousedown, and the click follows. bits-ui ignores the trigger for a
+  click outside but not for focus outside, so closing on that focus would let the
+  click open the panel again.
 - **Focus is trapped in the sheet only.** The sheet covers the page with a scrim,
   so it is modal in effect. The popover is not: with the bits-ui default trap a
   click on a field outside would lose its focus back to the trigger. The popover closes

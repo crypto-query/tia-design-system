@@ -2,6 +2,7 @@
     import { type BitsPrimitiveDivAttributes, Popover as PopoverPrimitive, type PortalProps } from "bits-ui";
     import { X } from "lucide-svelte";
     import { onMount, type Snippet } from "svelte";
+    import { MediaQuery } from "svelte/reactivity";
     import Button from "../button/Button.svelte";
     import { cn } from "../../../utils/cn";
 
@@ -20,7 +21,10 @@
         actions?: Snippet;
         open?: boolean;
         onOpenChange?: (open: boolean) => void;
-        /** Draw the panel as a bottom sheet with a close button, for a narrow container. @default false */
+        /**
+         * Draw the panel as a bottom sheet with a close button, for a narrow container. It applies
+         * below a 40rem viewport only; on a wider screen the panel fits as a popover. @default false
+         */
         sheet?: boolean;
         /** Preferred side in popover mode. The primitive flips it when there is no room. @default "bottom" */
         side?: "top" | "right" | "bottom" | "left";
@@ -40,7 +44,7 @@
         actions,
         open = $bindable(false),
         onOpenChange,
-        sheet = false,
+        sheet: sheetWanted = false,
         side = "bottom",
         align = "start",
         offset = 8,
@@ -57,7 +61,7 @@
         "flex flex-col gap-2 border border-popover-border bg-popover-background text-popover-foreground shadow-medium outline-hidden";
 
     const floatingStyles =
-        "z-50 w-80 rounded-md px-4 py-3.5 animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:fill-mode-forwards motion-reduce:animate-none";
+        "z-50 max-h-(--bits-popover-content-available-height) w-80 overflow-y-auto rounded-md px-4 py-3.5 animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:fill-mode-forwards motion-reduce:animate-none";
 
     const sheetStyles =
         "fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-2xl border-x-0 border-b-0 px-4 pt-2 pb-5 animate-in slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=closed]:fill-mode-forwards motion-reduce:animate-none";
@@ -65,6 +69,9 @@
     // bits-ui never places a panel that is already open on the root's first render — the
     // same trap as Tooltip's, and the same fix: let the root's open transition after mount.
     let mounted = $state(false);
+
+    const wideViewport = new MediaQuery("(min-width: 40rem)");
+    const sheet = $derived(sheetWanted && !wideViewport.current);
 
     onMount(() => {
         mounted = true;
@@ -128,7 +135,10 @@
             collisionPadding={8}
             id={panelId}
             onCloseAutoFocus={handleCloseAutoFocus}
-            onFocusOutside={() => handleOpenChange(false)}
+            onFocusOutside={(event) => {
+                // A press on the trigger focuses it first; closing here would let its click open the panel again.
+                if (!(event.target instanceof Node && triggerRef?.contains(event.target))) handleOpenChange(false);
+            }}
             preventScroll={sheet}
             role="dialog"
             {side}
