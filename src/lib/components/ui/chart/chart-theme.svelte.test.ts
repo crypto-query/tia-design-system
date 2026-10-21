@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { chartTheme } from "./chart-theme";
 import "../../../../app.css";
 
-const SLOTS = ["#cf801d", "#0a315a", "#235af3", "#659f6a", "#c92b75", "#826d0f", "#137d8e", "#6e12a9", "#8c1e00", "#1f6b40", "#a184d3"];
+const SLOTS = ["#008ffb", "#00e396", "#feb019", "#ff4560", "#775dd0", "#f86624", "#2b908f", "#c7f464", "#03a9f4", "#546e7a", "#a5978b"];
 
 const token = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 

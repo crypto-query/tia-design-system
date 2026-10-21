@@ -65,8 +65,8 @@
         <p class="max-w-200 text-sm text-foreground-muted">
             One ECharts instance on a <code class="font-mono">div</code>, styled from the tokens through
             <code class="font-mono">chartTheme</code>. The component registers no ECharts parts — this page registers the line chart, grid,
-            tooltip, data zoom and canvas renderer it draws. The theme is read once, after mount, from this page's root element. The chart
-            tokens have no dark values yet, so read this page in light mode.
+            tooltip, data zoom and canvas renderer it draws. The theme is read once, after mount, from this page's root element, so reload
+            the page after you switch the theme.
         </p>
     </header>
 

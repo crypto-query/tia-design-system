@@ -48,26 +48,22 @@ or the theme around it.
 
 ## Series slots
 
-| Slot         | Role           | Hex       |
-| ------------ | -------------- | --------- |
-| `--chart-1`  | Actual         | `#cf801d` |
-| `--chart-2`  | All            | `#0a315a` |
-| `--chart-3`  | Y1             | `#235af3` |
-| `--chart-4`  | Y2             | `#659f6a` |
-| `--chart-5`  | Y3             | `#c92b75` |
-| `--chart-6`  | Y4             | `#826d0f` |
-| `--chart-7`  | Decade offsets | `#137d8e` |
-| `--chart-8`  | 20 & 60        | `#6e12a9` |
-| `--chart-9`  | Bear           | `#8c1e00` |
-| `--chart-10` | Bull           | `#1f6b40` |
-| `--chart-11` | Halving        | `#a184d3` |
+The palette of the original Predictive Cycles chart, the same in both themes. A chart takes the slots in order.
 
-Each pair that shares a chart stays at least 11.45 ΔE2000 apart (worst: Actual and Y4 under protanopia) under every
-dichromacy. Slots 7–8 never share a chart with slots 9–11. Each slot is at least
-3:1 on white. Re-check both before you change one value.
+| Slot         | Hex       | On white | On the dark card |
+| ------------ | --------- | -------- | ---------------- |
+| `--chart-1`  | `#008ffb` | 3.32:1   | 4.12:1           |
+| `--chart-2`  | `#00e396` | 1.69:1   | 8.11:1           |
+| `--chart-3`  | `#feb019` | 1.84:1   | 7.46:1           |
+| `--chart-4`  | `#ff4560` | 3.35:1   | 4.09:1           |
+| `--chart-5`  | `#775dd0` | 4.93:1   | 2.78:1           |
+| `--chart-6`  | `#f86624` | 3.04:1   | 4.51:1           |
+| `--chart-7`  | `#2b908f` | 3.83:1   | 3.58:1           |
+| `--chart-8`  | `#c7f464` | 1.27:1   | 10.8:1           |
+| `--chart-9`  | `#03a9f4` | 2.63:1   | 5.21:1           |
+| `--chart-10` | `#546e7a` | 5.40:1   | 2.54:1           |
+| `--chart-11` | `#a5978b` | 2.84:1   | 4.83:1           |
 
-## Light only
-
-The chart tokens have no `.dark` values, which breaks the rule that a new token is
-defined in both themes. That is deliberate: the Blocks that draw charts render on a
-light theme only. Add the dark values when dark mode comes into scope — not before.
+The palette is kept for its match with the original, not for contrast: several slots are under 3:1 in one theme.
+Under a Machado 2009 full-severity dichromacy, slots 4 and 6 come within 4.5 ΔE2000 and slots 1 and 9 within 6.0, so
+a chart names its series in chips, a tooltip or labels as well. Slots 10 and 11 are not in the original.

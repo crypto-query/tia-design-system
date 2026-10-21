@@ -135,19 +135,20 @@
     /* ========================================
      COLORS - CHART SERIES
      ======================================== */
-    /* Light only by decision: no .dark values until dark mode is in scope. Pairs that share a chart
-       stay >= 11.45 dE2000 under each dichromacy; all are >= 3:1 on white. Re-check before changing one. */
-    --chart-1: #cf801d;
-    --chart-2: #0a315a;
-    --chart-3: #235af3;
-    --chart-4: #659f6a;
-    --chart-5: #c92b75;
-    --chart-6: #826d0f;
-    --chart-7: #137d8e;
-    --chart-8: #6e12a9;
-    --chart-9: #8c1e00;
-    --chart-10: #1f6b40;
-    --chart-11: #a184d3;
+    /* The original Predictive Cycles palette, one value for both themes. Below 3:1 on white: 2, 3,
+       8, 9 and 11; on the dark card: 5 and 10. Slots 4 and 6, and 1 and 9, are close under some
+       dichromacies, so a chart does not rely on colour alone. */
+    --chart-1: #008ffb;
+    --chart-2: #00e396;
+    --chart-3: #feb019;
+    --chart-4: #ff4560;
+    --chart-5: #775dd0;
+    --chart-6: #f86624;
+    --chart-7: #2b908f;
+    --chart-8: #c7f464;
+    --chart-9: #03a9f4;
+    --chart-10: #546e7a;
+    --chart-11: #a5978b;
 
     /* ========================================
      COLORS - GRADIENTS
