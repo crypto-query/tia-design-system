@@ -1,6 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/svelte";
 import { userEvent } from "@vitest/browser/context";
-import { afterEach, describe, expect, it, onTestFinished } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import Harness from "./Tooltip.test-harness.svelte";
 import "../../../../app.css";
 
@@ -20,15 +20,32 @@ function pushBelowFold(behavior: "auto" | "smooth" = "auto") {
     spacer.style.height = "200vh";
     document.body.prepend(spacer);
     document.documentElement.style.scrollBehavior = behavior;
-    onTestFinished(() => {
+    // The reset scrolls too; its events would land in the next test.
+    onTestFinished(async () => {
         spacer.remove();
         document.documentElement.style.scrollBehavior = "";
         window.scrollTo({ top: 0, behavior: "instant" });
+        await settle();
+    });
+}
+
+// Makes this browser look like one without `scrollend`, as Safari before 26.2 is.
+function hideScrollend() {
+    let owner: object | null = window;
+    while (owner !== null && !Object.hasOwn(owner, "onscrollend")) owner = Object.getPrototypeOf(owner);
+    const descriptor = owner === null ? undefined : Object.getOwnPropertyDescriptor(owner, "onscrollend");
+    if (owner === null || descriptor === undefined) return;
+    const found = owner;
+    Reflect.deleteProperty(found, "onscrollend");
+    expect("onscrollend" in window).toBe(false);
+    onTestFinished(() => {
+        Object.defineProperty(found, "onscrollend", descriptor);
     });
 }
 
 const scrollEnd = () => new Promise((resolve) => window.addEventListener("scrollend", resolve, { once: true }));
-const settle = () => new Promise((resolve) => setTimeout(resolve, 300));
+const settle = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms));
+const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
 describe("Tooltip", () => {
     describe("focus", () => {
@@ -88,14 +105,61 @@ describe("Tooltip", () => {
             render(Harness, { content: HINT });
             pushBelowFold("smooth");
             const trigger = triggerEl();
-            const scrolled = scrollEnd();
 
+            // No `await scrollEnd()`: WebKit drops the smooth scroll when focus leaves at once.
             trigger.focus();
             trigger.blur();
+            await settle(1000);
+
+            expect(screen.queryByRole("tooltip")).toBeNull();
+        });
+
+        it("does not open when Escape comes before the scroll ends", async () => {
+            render(Harness, { content: HINT });
+            pushBelowFold("smooth");
+            const scrolled = scrollEnd();
+
+            triggerEl().focus();
+            await userEvent.keyboard("{Escape}");
             await scrolled;
             await settle();
 
+            expect(triggerEl()).toHaveFocus();
             expect(screen.queryByRole("tooltip")).toBeNull();
+        });
+
+        it.each([
+            { browser: "has", quiet: 500 },
+            { browser: "lacks", quiet: 100 }
+        ])("waits out a scroll with no scrollend in a browser that $browser it", async ({ browser, quiet }) => {
+            if (browser === "lacks") hideScrollend();
+            render(Harness, { content: HINT });
+
+            triggerEl().focus();
+            window.dispatchEvent(new Event("scroll"));
+            await settle(quiet - 50);
+
+            expect(screen.queryByRole("tooltip")).toBeNull();
+            await settle(150);
+            expect(screen.getByRole("tooltip")).toHaveTextContent(HINT);
+        });
+
+        it("opens at once when only an inner scroller brings the trigger into view", async () => {
+            const scroller = document.createElement("div");
+            scroller.style.cssText = "display: flex; overflow-x: auto; scroll-behavior: smooth";
+            const spacer = document.createElement("div");
+            spacer.style.cssText = "flex: none; width: 200vw";
+            scroller.append(spacer);
+            document.body.append(scroller);
+            onTestFinished(() => scroller.remove());
+
+            render(Harness, { target: scroller, props: { content: HINT } });
+            triggerEl().focus();
+            await nextFrame();
+            await nextFrame();
+
+            expect(window.scrollX).toBe(0);
+            expect(screen.getByRole("tooltip")).toHaveTextContent(HINT);
         });
     });
 
@@ -149,6 +213,22 @@ describe("Tooltip", () => {
 
             expect(window.scrollY).toBeGreaterThan(0);
             expect(screen.getByRole("tooltip")).toHaveTextContent(HINT);
+        });
+
+        it("closes on Escape before the scroll ends, and tells the call site", async () => {
+            const onOpenChange = vi.fn();
+            const { rerender } = render(Harness, { content: HINT, onOpenChange });
+            pushBelowFold("smooth");
+            const scrolled = scrollEnd();
+
+            triggerEl().scrollIntoView();
+            await rerender({ content: HINT, onOpenChange, open: true });
+            await userEvent.keyboard("{Escape}");
+            await scrolled;
+            await settle();
+
+            expect(screen.queryByRole("tooltip")).toBeNull();
+            expect(onOpenChange).toHaveBeenLastCalledWith(false);
         });
     });
 

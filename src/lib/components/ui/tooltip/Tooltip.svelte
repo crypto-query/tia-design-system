@@ -81,22 +81,29 @@
 
     // bits-ui closes every open tooltip on a window scroll, and focus scrolls an off-screen
     // trigger into view. So an open waits a frame, or for that scroll to end.
-    function afterScroll(trigger: Element | undefined, run: () => void): () => void {
-        // A smooth scroll starts frames after the focus, so an off-screen trigger says one is coming.
-        let still = trigger === undefined || inView(trigger);
+    function afterScroll(trigger: Element | undefined, run: () => void, onEscape?: () => void): () => void {
+        // A smooth scroll starts frames after the focus, so the trigger's position says one is coming.
+        let still = trigger === undefined || !windowScrollsTo(trigger);
         let quiet: ReturnType<typeof setTimeout> | undefined;
         const done = () => {
             stop();
             run();
         };
-        // Fallback for Safari before 26.2 and a scroll that ends without `scrollend`: 100 ms of quiet.
+        // Safari before 26.2 has no `scrollend`: 100 ms of quiet stands in. Elsewhere 500 ms only
+        // covers a scroll with no `scrollend`, as Firefox's smooth scroll can pause over 100 ms.
+        const quietMs = "onscrollend" in window ? 500 : 100;
         const wait = () => {
             clearTimeout(quiet);
-            quiet = setTimeout(done, 100);
+            quiet = setTimeout(done, quietMs);
         };
         const onScroll = () => {
             still = false;
             wait();
+        };
+        const onKeydown = (event: KeyboardEvent) => {
+            if (event.key !== "Escape") return;
+            stop();
+            onEscape?.();
         };
         const frame = requestAnimationFrame(() => (still ? done() : wait()));
         function stop() {
@@ -104,15 +111,25 @@
             clearTimeout(quiet);
             window.removeEventListener("scroll", onScroll);
             window.removeEventListener("scrollend", done);
+            window.removeEventListener("keydown", onKeydown, true);
         }
         window.addEventListener("scroll", onScroll);
         window.addEventListener("scrollend", done);
+        window.addEventListener("keydown", onKeydown, true);
         return stop;
     }
 
-    function inView(element: Element) {
+    // Outside the viewport on a side the window can still scroll toward. An inner scroller
+    // that brings the trigger into view scrolls only itself, which bits-ui ignores.
+    function windowScrollsTo(element: Element) {
         const { top, left, bottom, right } = element.getBoundingClientRect();
-        return top >= 0 && left >= 0 && bottom <= window.innerHeight && right <= window.innerWidth;
+        const { clientWidth, clientHeight, scrollWidth, scrollHeight } = document.documentElement;
+        return (
+            (top < 0 && window.scrollY > 0) ||
+            (left < 0 && window.scrollX > 0) ||
+            (bottom > clientHeight && window.scrollY + clientHeight < scrollHeight - 1) ||
+            (right > clientWidth && window.scrollX + clientWidth < scrollWidth - 1)
+        );
     }
 
     let triggerNode: HTMLElement | undefined;
@@ -131,7 +148,11 @@
             shown = false;
             return;
         }
-        return afterScroll(triggerNode, () => (shown = true));
+        return afterScroll(
+            triggerNode,
+            () => (shown = true),
+            () => handleOpenChange(false)
+        );
     });
 
     let cancelFocusOpen: (() => void) | undefined;

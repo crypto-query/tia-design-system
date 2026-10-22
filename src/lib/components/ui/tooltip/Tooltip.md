@@ -166,13 +166,22 @@ without a wait the hint closes about 4 ms after it opens.
 
 So an open waits until the window is still:
 
-| Case at the time of the open                                    | Opens                                  |
-| --------------------------------------------------------------- | -------------------------------------- |
-| Trigger fully in view, and no `scroll` before the next frame    | on the next animation frame            |
-| A `scroll` comes first, as with an instant focus scroll         | on `scrollend`                         |
-| Trigger not fully in view: a smooth scroll starts 2 frames late | on `scrollend`                         |
-| No `scrollend`: Safari before 26.2, or a scroll layout clamps   | 100 ms after the last `scroll`         |
-| Trigger not fully in view, and no window scroll comes           | 100 ms after the first animation frame |
+| Case at the time of the open                                                                                                            | Opens                          |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| No window scroll is coming                                                                                                              | on the next animation frame    |
+| A `scroll` comes first, as with an instant focus scroll                                                                                 | on `scrollend`                 |
+| The trigger is outside the viewport on a side the window can still scroll toward. A smooth scroll starts about 2 frames after the focus | on `scrollend`                 |
+| The browser has no `scrollend` (Safari before 26.2)                                                                                     | 100 ms after the last `scroll` |
+| A scroll that never sends `scrollend`, as when layout clamps the scroll position                                                        | 500 ms after the last `scroll` |
+| The position said a window scroll is coming, but none comes, as with `focus({ preventScroll: true })`                                   | 500 ms after the first frame   |
+
+The 500 ms quiet is long on purpose. The tail of a smooth scroll in Firefox can
+pause more than 100 ms between two `scroll` events. A shorter quiet opens the hint
+in that pause, and the next `scroll` closes it.
+
+"A side the window can still scroll toward" matters for a trigger in an inner
+scroller, such as a wide grid. The focus scrolls only that scroller. bits-ui
+ignores that scroll, so the hint opens on the next frame.
 
 Both paths wait:
 
@@ -186,13 +195,17 @@ Only a `:focus-visible` focus waits. A press focuses without a scroll, and the
 primitive ignores a focus during a press. A late focus after a quick click would
 open the hint that the click closed.
 
-A scroll while the hint is open still closes it. Hover, Escape and blur do not
-change. The primitive draws a hover open at once, and `shown` follows one frame
-later. Escape during a wait does not stop the wait.
+Escape during a wait stops the wait. For a controlled open it also calls
+`onOpenChange(false)`, as Escape on an open hint does.
 
-`Tooltip.svelte.test.ts` pins three cases: a focus with an instant scroll, a focus
-with a smooth scroll, and a controlled open during a smooth scroll. All three fail
-without the wait. The 100 ms fallback has no test.
+A scroll while the hint is open still closes it. Hover and blur do not change.
+The primitive draws a hover open at once, and `shown` follows one frame later.
+
+`Tooltip.svelte.test.ts` pins each row of the table, Escape and blur during a
+wait, and the inner scroller. The test for a browser with no `scrollend` hides
+`onscrollend` from `window`. The tests pass in Chromium, WebKit and Firefox. The
+project runs only Chromium, so a run in the other two is a manual step: add them
+as `browser.instances` in a temporary config.
 
 ## What the caller's element receives, and the two attributes to know about
 
