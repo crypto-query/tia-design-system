@@ -132,13 +132,15 @@ test would say so.
 
 What the layer needs is the root's `open` going **false → true with the trigger
 already in the DOM**, which is what every other open does. So the primitive is
-handed `mounted && open` rather than the caller's value directly, and `mounted`
-flips in `onMount`. One tick, invisible to a call site that starts closed.
+handed `shown` rather than the caller's value directly. `shown` follows `open`,
+but every false → true waits at least one animation frame — see the next
+section — and an effect only runs after mount. Invisible to a call site that
+starts closed.
 
 Two consequences worth knowing:
 
 - **The primitive is controlled, not bound.** `bind:open` cannot express "the
-  caller's value, but not yet", so `Root` takes `open={mounted && open}` and
+  caller's value, but not yet", so `Root` takes `open={shown}` and
   `onOpenChange` writes the primitive's own opens and closes back to the
   `$bindable`. The caller's `bind:open` is unaffected.
 - **Deferring the portal instead does not work**, and it is the obvious thing to
@@ -153,6 +155,44 @@ tooltips opened from the call site on all four sides.
 
 The same trap applies to every bits-ui floating component — Popover, Dropdown,
 Menubar — anywhere a call site opens one from the start.
+
+## An open waits for the scroll that focus causes
+
+**bits-ui closes every open tooltip on any window scroll.** No prop turns this
+off. The provider listens on `window`. It closes the open tooltip when the scroll
+target contains the trigger. For a page scroll the target is `document`, which
+contains every trigger. Focus on a control below the fold scrolls the page, so
+without a wait the hint closes about 4 ms after it opens.
+
+So an open waits until the window is still:
+
+| Case at the time of the open                                    | Opens                                  |
+| --------------------------------------------------------------- | -------------------------------------- |
+| Trigger fully in view, and no `scroll` before the next frame    | on the next animation frame            |
+| A `scroll` comes first, as with an instant focus scroll         | on `scrollend`                         |
+| Trigger not fully in view: a smooth scroll starts 2 frames late | on `scrollend`                         |
+| No `scrollend`: Safari before 26.2, or a scroll layout clamps   | 100 ms after the last `scroll`         |
+| Trigger not fully in view, and no window scroll comes           | 100 ms after the first animation frame |
+
+Both paths wait:
+
+- **The primitive's focus handler.** The component wraps the trigger's
+  `onfocus`. The primitive gets the focus when the scroll ends, and only if the
+  trigger still has focus.
+- **A controlled `open` that goes from false to true.** `shown` takes the same
+  wait. A close stops a wait in progress.
+
+Only a `:focus-visible` focus waits. A press focuses without a scroll, and the
+primitive ignores a focus during a press. A late focus after a quick click would
+open the hint that the click closed.
+
+A scroll while the hint is open still closes it. Hover, Escape and blur do not
+change. The primitive draws a hover open at once, and `shown` follows one frame
+later. Escape during a wait does not stop the wait.
+
+`Tooltip.svelte.test.ts` pins three cases: a focus with an instant scroll, a focus
+with a smooth scroll, and a controlled open during a smooth scroll. All three fail
+without the wait. The 100 ms fallback has no test.
 
 ## What the caller's element receives, and the two attributes to know about
 

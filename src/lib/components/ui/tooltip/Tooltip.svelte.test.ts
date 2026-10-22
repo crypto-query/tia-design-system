@@ -14,6 +14,22 @@ function triggerEl(): HTMLElement {
     return screen.getByRole("button", { name: "Copy webhook URL" });
 }
 
+// Puts the trigger below the fold, so focusing it scrolls the window.
+function pushBelowFold(behavior: "auto" | "smooth" = "auto") {
+    const spacer = document.createElement("div");
+    spacer.style.height = "200vh";
+    document.body.prepend(spacer);
+    document.documentElement.style.scrollBehavior = behavior;
+    onTestFinished(() => {
+        spacer.remove();
+        document.documentElement.style.scrollBehavior = "";
+        window.scrollTo({ top: 0, behavior: "instant" });
+    });
+}
+
+const scrollEnd = () => new Promise((resolve) => window.addEventListener("scrollend", resolve, { once: true }));
+const settle = () => new Promise((resolve) => setTimeout(resolve, 300));
+
 describe("Tooltip", () => {
     describe("focus", () => {
         it("opens the hint with no delay, and the hint describes the trigger", async () => {
@@ -51,6 +67,35 @@ describe("Tooltip", () => {
 
             await waitFor(() => expect(screen.queryByRole("tooltip")).toBeNull());
             expect(trigger).not.toHaveAccessibleDescription();
+        });
+
+        it.each(["auto", "smooth"] as const)("stays open after the %s scroll that focus causes", async (behavior) => {
+            render(Harness, { content: HINT });
+            pushBelowFold(behavior);
+            const trigger = triggerEl();
+            const scrolled = scrollEnd();
+
+            trigger.focus();
+            await scrolled;
+            await settle();
+
+            expect(window.scrollY).toBeGreaterThan(0);
+            expect(screen.getByRole("tooltip")).toHaveTextContent(HINT);
+            expect(trigger).toHaveAccessibleDescription(HINT);
+        });
+
+        it("does not open when focus leaves before the scroll ends", async () => {
+            render(Harness, { content: HINT });
+            pushBelowFold("smooth");
+            const trigger = triggerEl();
+            const scrolled = scrollEnd();
+
+            trigger.focus();
+            trigger.blur();
+            await scrolled;
+            await settle();
+
+            expect(screen.queryByRole("tooltip")).toBeNull();
         });
     });
 
@@ -90,6 +135,20 @@ describe("Tooltip", () => {
             expect(panel.width).toBeGreaterThan(0);
             expect(panel.left).toBeLessThan(trigger.right);
             expect(panel.right).toBeGreaterThan(trigger.left);
+        });
+
+        it("waits for a window scroll that starts with the open, then stays open", async () => {
+            const { rerender } = render(Harness, { content: HINT });
+            pushBelowFold("smooth");
+            const scrolled = scrollEnd();
+
+            triggerEl().scrollIntoView();
+            await rerender({ content: HINT, open: true });
+            await scrolled;
+            await settle();
+
+            expect(window.scrollY).toBeGreaterThan(0);
+            expect(screen.getByRole("tooltip")).toHaveTextContent(HINT);
         });
     });
 

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { type BitsPrimitiveDivAttributes, type PortalProps, Tooltip as TooltipPrimitive } from "bits-ui";
-    import { onMount, type Snippet } from "svelte";
+    import type { Snippet } from "svelte";
+    import { createAttachmentKey } from "svelte/attachments";
     import Kbd from "../kbd/Kbd.svelte";
     import { cn } from "../../../utils/cn";
 
@@ -78,14 +79,79 @@
     // trigger's `aria-describedby` empty — the reason for the `child` snippet. `Tooltip.md`.
     const hintId = $props.id();
 
-    // bits-ui never places a panel that is already open on the root's first render, so the
-    // root's open has to transition after mount — which is also why the primitive is
-    // controlled rather than bound. Deferring the portal instead does not work; `Tooltip.md`.
-    let mounted = $state(false);
+    // bits-ui closes every open tooltip on a window scroll, and focus scrolls an off-screen
+    // trigger into view. So an open waits a frame, or for that scroll to end.
+    function afterScroll(trigger: Element | undefined, run: () => void): () => void {
+        // A smooth scroll starts frames after the focus, so an off-screen trigger says one is coming.
+        let still = trigger === undefined || inView(trigger);
+        let quiet: ReturnType<typeof setTimeout> | undefined;
+        const done = () => {
+            stop();
+            run();
+        };
+        // Fallback for Safari before 26.2 and a scroll that ends without `scrollend`: 100 ms of quiet.
+        const wait = () => {
+            clearTimeout(quiet);
+            quiet = setTimeout(done, 100);
+        };
+        const onScroll = () => {
+            still = false;
+            wait();
+        };
+        const frame = requestAnimationFrame(() => (still ? done() : wait()));
+        function stop() {
+            cancelAnimationFrame(frame);
+            clearTimeout(quiet);
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("scrollend", done);
+        }
+        window.addEventListener("scroll", onScroll);
+        window.addEventListener("scrollend", done);
+        return stop;
+    }
 
-    onMount(() => {
-        mounted = true;
+    function inView(element: Element) {
+        const { top, left, bottom, right } = element.getBoundingClientRect();
+        return top >= 0 && left >= 0 && bottom <= window.innerHeight && right <= window.innerWidth;
+    }
+
+    let triggerNode: HTMLElement | undefined;
+    const captureTrigger = {
+        [createAttachmentKey()]: (node: HTMLElement) => {
+            triggerNode = node;
+        }
+    };
+
+    // The primitive's open, a step behind `open`. The step also keeps bits-ui from meeting a
+    // panel already open on its first render, which it never places.
+    let shown = $state(false);
+
+    $effect(() => {
+        if (!open) {
+            shown = false;
+            return;
+        }
+        return afterScroll(triggerNode, () => (shown = true));
     });
+
+    let cancelFocusOpen: (() => void) | undefined;
+
+    // Keyboard focus is what scrolls; a press focuses in place, and the primitive ignores it.
+    function deferFocus(props: Record<string, unknown>) {
+        const onfocus = props.onfocus as (event: FocusEvent) => void;
+        return {
+            ...props,
+            ...captureTrigger,
+            onfocus: (event: FocusEvent) => {
+                const target = event.currentTarget as HTMLElement;
+                cancelFocusOpen?.();
+                if (!target.matches(":focus-visible")) return onfocus(event);
+                cancelFocusOpen = afterScroll(target, () => {
+                    if (document.activeElement === target) onfocus(event);
+                });
+            }
+        };
+    }
 
     function handleOpenChange(next: boolean) {
         open = next;
@@ -99,8 +165,12 @@
         {disabled}
         disableHoverableContent={!interactive}
         onOpenChange={handleOpenChange}
-        open={mounted && open}>
-        <TooltipPrimitive.Trigger child={trigger} />
+        open={shown}>
+        <TooltipPrimitive.Trigger>
+            {#snippet child({ props })}
+                {@render trigger({ props: deferFocus(props) })}
+            {/snippet}
+        </TooltipPrimitive.Trigger>
 
         <!-- The primitive only stops the trigger from opening the panel, so a call site
              binding `open` would still draw one it asked to suppress. -->
